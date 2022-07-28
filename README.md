@@ -4,7 +4,8 @@ Image of a Docker container with [RelaX - relational algebra calculator](https:/
 
 ## REQUIREMENTS:
 
-* Install Docker Desktop (https://www.docker.com/get-started);
+* Install [Git](https://github.com/git-guides/install-git) (only for building and publishing).
+* Install [Docker Desktop](https://www.docker.com/get-started);
 
 ## HOW TO USE THIS DOCKER IMAGE:
 
@@ -12,27 +13,33 @@ Image of a Docker container with [RelaX - relational algebra calculator](https:/
 
 1. Open a Terminal window and log in into GitHub’s Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
 
-        docker login ghcr.io
+```bash
+docker login ghcr.io
+```
 
 1. Once you logged in, start the container using the following command:
 
-        docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.0
+```bash
+docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.1
+```
 
 **NOTE:** The container uses ports 8080 (RelaX Web app) and 3000 (RelaX API). Port mapping is mandatory for the desired service to work (i.e., the argument '-p HOST_PORT:3000' is needed only if you plan to use RelaX API, and vice-versa).
 
 1. Open a Web browser window and visit the URL http://localhost. Voilà! RelaX Web application should work properly.
 
-    <p align="center">
-        <img src="imgs/relax_web_app.png" width=800 />
-    </p>
+<p align="center">
+  <img src="imgs/relax_web_app.png" width=800 />
+</p>
 
 1. Run the following command to test the RelaX API. You should get the query result encoded in JSON format.
 
-        curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+```bash
+curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+```
 
-    <p align="center">
-        <img src="imgs/relax_api.png" width=800 />
-    </p>
+<p align="center">
+  <img src="imgs/relax_api.png" width=800 />
+</p>
 
 * **Increasing GitHub rate limit for API requests using Basic Authentication:**
 
@@ -42,42 +49,55 @@ RelaX Web application and API may need to make calls to GitHub API (i.e., to dow
 
 1. Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
-        docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.0
-    
+```bash
+docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.1
+```
+
 **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
-    
-        curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+
+```bash
+curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+```
 
 ## HOW TO BUILD THIS DOCKER IMAGE:
 
 * Open a Terminal window and prepare the environment.
 
-        # List downloaded images
-        docker images -a
+```bash
+# List downloaded images
+docker images -a
 
-        # List existing containers
-        docker container ls -a
+# List existing containers
+docker container ls -a
 
-        # Pull Node image from Docker Hub
-        docker pull node:12
+# Pull Node image from Docker Hub
+docker pull node:12
 
-        # Build image
-        docker build -f Dockerfile -t relax-docker .
+# Clone this repo and set it as your working directory
+git clone https://github.com/rlaiola/relax-docker.git
+cd relax-docker
 
-        docker images -a
- 
-        # Get IMAGE_ID from previous command and specify a version number (e.g., 1.0.0)
-        docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.0
+# Build image
+docker build -f Dockerfile -t relax-docker .
+
+# Get IMAGE_ID and specify a version number (e.g., 1.0.1)
+docker images -a
+docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.1
+```
 
 ## HOW TO UPLOAD THIS DOCKER IMAGE:
 
 1. Open a Terminal window and log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
 
-        docker login ghcr.io
+```bash
+docker login ghcr.io
+```
 
 1. Push the container image to repository.
 
-        docker push ghcr.io/rlaiola/relax-docker:1.0.0
+```bash
+docker push ghcr.io/rlaiola/relax-docker:1.0.1
+```
 
 ## LICENSE:
 
