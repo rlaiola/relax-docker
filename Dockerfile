@@ -1,5 +1,5 @@
 #========================================================================
-# Copyright 2021 Rodrigo Laiola Guimarães <rodrigo@laiola.com.br>
+# Copyright 2021 Rodrigo Laiola Guimarães
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,10 +57,9 @@
 
 FROM node:12
 
-MAINTAINER Rodrigo Laiola Guimaraes <rodrigo@laiola.com.br>
-LABEL maintainer "Rodrigo Laiola Guimaraes <rodrigo@laiola.com.br>"
+LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
-ENV UPDATED_AT 2021-11-08
+ENV UPDATED_AT 2022-08-11
 
 # No interactive frontend during docker build.
 ENV DEBIAN_FRONTEND noninteractive
@@ -71,19 +70,27 @@ ENV DEBCONF_NONINTERACTIVE_SEEN true
 # https://stackoverflow.com/questions/29929534/docker-error-unable-to-locate-package-git
 RUN apt-get update \
     # Necessary to clone repository \
-    && apt-get install -y git
+    && apt-get install -y --no-install-recommends git=1:2.11.0-3+deb9u7 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, 
 # Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium 
 # that Puppeteer installs, work
 RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    && apt-get install -y --no-install-recommends wget=1.18-5+deb9u3 gnupg=2.1.18-8~deb9u4 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+    
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+RUN apt-get update \
+    && apt-get install -y google-chrome-stable=104.0.5112.79-1 fonts-ipafont-gothic=00303-16 fonts-wqy-zenhei=0.9.45-6 fonts-thai-tlwg=1:0.6.3-1 fonts-kacst=2.01+mry-12 fonts-freefont-ttf=20120503-6 libxss1=1:1.2.2-1 \
       --no-install-recommends \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package
@@ -101,21 +108,21 @@ WORKDIR /usr/src/relax-api
 
 # Clone RelaX repository and checkout the static files (branch gh-pages)
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
-RUN mkdir dist && \
-    # Change to the root of the local repository \
-    cd dist && \
-    git clone https://github.com/rlaiola/relax.git && \
-    # Change to the root of the local repository \
-    cd relax && \
-    # List all your branches \
-    # https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
-    git branch -a && \
+RUN git clone https://github.com/rlaiola/relax.git dist/relax
+
+# Change to the root of the local repository
+WORKDIR /usr/src/relax-api/dist/relax
+
+# List all your branches \
+# https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
+RUN git branch -a && \
     # Checkout branch gh_pages and confirm you are now working on that one \
     git checkout origin/gh-pages && \
     git checkout gh-pages && \
-    git branch && \
-    # Change to the root of the local repository \
-    cd ../..
+    git branch
+
+# Change to the root of the local repository
+WORKDIR /usr/src/relax-api/
 
 # Install dependencies
 #RUN npm i express puppeteer winston --save
