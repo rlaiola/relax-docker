@@ -6,8 +6,12 @@ name: Build and publish Docker image on ghcr.io (nightly builds and new releases
 # documentation.
 
 on:
+  # Runs daily at 9:15 AM UTC
   schedule:
     - cron: '15 9 * * *'
+  # on button click
+  workflow_dispatch:
+  # or on new release
   push:
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
