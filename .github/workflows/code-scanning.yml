@@ -1,0 +1,64 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Code scanning
+
+on:
+  # Runs on pushes
+  push:
+    branches: [ "main" ]
+  # on pulls
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+  # daily at 8:15 AM UTC
+  schedule:
+    - cron: '15 8 * * *'
+  # or on button click
+  workflow_dispatch:
+
+jobs:
+  trivy-scan:
+    permissions:
+      contents: read         # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Checkout a repository under $GITHUB_WORKSPACE, so the workflow can access it.
+      # https://github.com/marketplace/actions/checkout
+      - 
+        name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Repository name with owner. For example, actions/checkout.
+          # Default: ${{ github.repository }}
+          repository: '${{ github.repository }}'
+          # The branch, tag or SHA to checkout. When checking out the repository that
+          # triggered a workflow, this defaults to the reference or SHA for that event.
+          # Otherwise, uses the default branch.
+          ref: 'main'
+
+      # Run Trivy vulnerability scanner in fs mode.
+      # https://github.com/marketplace/actions/aqua-security-trivy
+      - 
+        name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-fs.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      # Upload results to GitHub so they can be displayed in the repository's security tab
+      # https://github.com/github/codeql-action
+      - 
+        name: Upload scan results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results-fs.sarif'
