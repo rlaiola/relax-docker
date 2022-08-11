@@ -1,4 +1,4 @@
-name: Build and publish Docker image on ghcr.io (new release)
+name: Build and publish Docker image on ghcr.io (nightly builds and new releases)
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -82,6 +82,14 @@ jobs:
           load: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      # Add some additional checks to help secure Docker image.
+      # https://github.com/marketplace/actions/container-image-scan
+      -
+        name: Scan image
+        uses: azure/container-scan@v0.1
+        with:
+          image-name: ${{ steps.meta.outputs.tags }}
 
       - 
         name: Build and push image to Docker registry
