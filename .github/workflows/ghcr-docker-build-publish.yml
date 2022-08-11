@@ -6,7 +6,7 @@ name: Build and publish Docker image on ghcr.io (nightly builds and new releases
 # documentation.
 
 on:
-  # Runs on new releases
+  # Run on new releases
   push:
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
@@ -86,14 +86,6 @@ jobs:
           load: ${{ github.event_name != 'pull_request' }}
           tags: relax-docker
 
-      # Add some additional checks to help secure Docker image.
-      # https://github.com/marketplace/actions/container-image-scan
-      #-
-      #  name: Scan image
-      #  uses: azure/container-scan@v0.1
-      #  with:
-      #    image-name: relax-docker
-
       # Run Trivy vulnerability scanner.
       # https://github.com/marketplace/actions/aqua-security-trivy
       - 
@@ -105,7 +97,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
 
       - 
         name: Build and push image to Docker registry
