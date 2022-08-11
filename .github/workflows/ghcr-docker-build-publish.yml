@@ -46,6 +46,18 @@ jobs:
           # Otherwise, uses the default branch.
           ref: 'main'
 
+      # Scan repository for vulnerabilities.
+      # https://github.com/marketplace/actions/aqua-security-trivy
+      - 
+        name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL'
+
       # Extract metadata from Git reference and GitHub events for Docker.
       # https://github.com/marketplace/actions/docker-metadata-action
       - 
