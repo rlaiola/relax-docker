@@ -55,7 +55,7 @@
 # References:
 #    https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 
-FROM node:12
+FROM ubuntu:22.04
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
@@ -65,30 +65,32 @@ ENV UPDATED_AT 2022-08-11
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
 
-# https://raw.githubusercontent.com/dbis-uibk/relax/development/helper/relaxCLI.py
-# Docker error: Unable to locate package git
-# https://stackoverflow.com/questions/29929534/docker-error-unable-to-locate-package-git
+# Install Node.js and npm
+# https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
 RUN apt-get update \
-    # Necessary to clone repository \
-    && apt-get install -y --no-install-recommends git=1:2.11.0-3+deb9u7 \
+    && apt-get install -y --no-install-recommends curl gnupg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nodejs npm \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+RUN node --version
+RUN npm --version
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, 
 # Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium 
 # that Puppeteer installs, work
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget=1.18-5+deb9u3 gnupg=2.1.18-8~deb9u4 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-    
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
 RUN apt-get update \
-    && apt-get install -y google-chrome-stable=104.0.5112.79-1 fonts-ipafont-gothic=00303-16 fonts-wqy-zenhei=0.9.45-6 fonts-thai-tlwg=1:0.6.3-1 fonts-kacst=2.01+mry-12 fonts-freefont-ttf=20120503-6 libxss1=1:1.2.2-1 \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
       --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -99,6 +101,15 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 # Set working folder
 WORKDIR /usr/src
+
+# https://raw.githubusercontent.com/dbis-uibk/relax/development/helper/relaxCLI.py
+# Docker error: Unable to locate package git
+# https://stackoverflow.com/questions/29929534/docker-error-unable-to-locate-package-git
+RUN apt-get update \
+    # Necessary to clone repository \
+    && apt-get install -y --no-install-recommends git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Clone RelaX API repository
 RUN git clone https://github.com/rlaiola/relax-api.git
