@@ -84,8 +84,7 @@ jobs:
         with:
           context: .
           load: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: relax-docker
 
       # Add some additional checks to help secure Docker image.
       # https://github.com/marketplace/actions/container-image-scan
@@ -93,7 +92,7 @@ jobs:
         name: Scan image
         uses: azure/container-scan@v0.1
         with:
-          image-name: ${{ steps.meta.outputs.tags }}
+          image-name: relax-docker
 
       - 
         name: Build and push image to Docker registry
