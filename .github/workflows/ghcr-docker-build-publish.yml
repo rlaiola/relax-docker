@@ -6,15 +6,15 @@ name: Build and publish Docker image on ghcr.io (nightly builds and new releases
 # documentation.
 
 on:
-  # Runs daily at 9:15 AM UTC
-  schedule:
-    - cron: '15 9 * * *'
-  # on button click
-  workflow_dispatch:
-  # or on new release
+  # Runs on new releases
   push:
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
+  # daily at 9:15 AM UTC
+  schedule:
+    - cron: '15 9 * * *'
+  # or on button click
+  workflow_dispatch:
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -24,7 +24,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,18 +45,6 @@ jobs:
           # triggered a workflow, this defaults to the reference or SHA for that event.
           # Otherwise, uses the default branch.
           ref: 'main'
-
-      # Scan repository for vulnerabilities.
-      # https://github.com/marketplace/actions/aqua-security-trivy
-      - 
-        name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
 
       # Extract metadata from Git reference and GitHub events for Docker.
       # https://github.com/marketplace/actions/docker-metadata-action
@@ -100,11 +88,24 @@ jobs:
 
       # Add some additional checks to help secure Docker image.
       # https://github.com/marketplace/actions/container-image-scan
-      -
-        name: Scan image
-        uses: azure/container-scan@v0.1
+      #-
+      #  name: Scan image
+      #  uses: azure/container-scan@v0.1
+      #  with:
+      #    image-name: relax-docker
+
+      # Run Trivy vulnerability scanner.
+      # https://github.com/marketplace/actions/aqua-security-trivy
+      - 
+        name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
         with:
-          image-name: relax-docker
+          image-ref: 'relax-docker'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
       - 
         name: Build and push image to Docker registry
