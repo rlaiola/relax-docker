@@ -1,12 +1,12 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
+# This workflow may use actions that are not certified by GitHub.
+# They may be provided by a third-party and be governed by
 # separate terms of service, privacy policy, and support
 # documentation.
 
 name: Code scanning
 
 on:
-  # Runs on pushes
+  # Run on pushes
   push:
     branches: [ "main" ]
   # on pulls
@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  trivy-scan:
+  security-analysis:
     permissions:
       contents: read         # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
