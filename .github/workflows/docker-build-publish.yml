@@ -1,9 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
+# This workflow may use actions that are not certified by GitHub.
+# They may be provided by a third-party and be governed by
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Build and publish Docker image
+name: Docker image
 
 on:
   # Runs on new releases
@@ -24,7 +24,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-publish:
+  ci-plan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
