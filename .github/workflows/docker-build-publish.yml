@@ -1,16 +1,16 @@
-name: Build and publish Docker image on ghcr.io (nightly builds and new releases)
-
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
 
+name: Build and publish Docker image
+
 on:
-  # Run on new releases
+  # Runs on new releases
   push:
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
-  # daily at 9:15 AM UTC
+  # daily at 9:15 AM UTC (nightly builds)
   schedule:
     - cron: '15 9 * * *'
   # or on button click
