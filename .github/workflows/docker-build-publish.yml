@@ -80,7 +80,7 @@ jobs:
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - 
         name: Build image for testing
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           load: ${{ github.event_name != 'pull_request' }}
@@ -101,7 +101,7 @@ jobs:
 
       - 
         name: Build and push image to Docker registry
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
