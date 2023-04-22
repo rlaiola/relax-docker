@@ -55,7 +55,7 @@
 # References:
 #    https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 
-FROM ubuntu:22.10
+FROM ubuntu:kinetic
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
