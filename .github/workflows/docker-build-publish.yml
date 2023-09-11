@@ -36,7 +36,7 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - 
         name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           # Repository name with owner. For example, actions/checkout.
           # Default: ${{ github.repository }}
