@@ -32,6 +32,7 @@
 - [How To Add Custom Configuration](#how-to-add-custom-configuration)
 - [How To Build It (For Development)](#how-to-build-it-for-development)
 - [How To Publish It](#how-to-publish-it)
+- [How To Contribute](#how-to-contribute)
 - [License](#license)
 - [Support](#support)
 
@@ -87,15 +88,15 @@ Unauthenticated requests are associated with the originating IP address, and not
 
 * Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
-```sh
-docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.2
-```
+  ```sh
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.2
+  ```
 
 > **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
 
-```sh
-curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
-```
+  ```sh
+  curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+  ```
 
 ### Running On Different Ubuntu Release Images
 
@@ -109,9 +110,10 @@ To run _relax-docker_ built on top of different versions of Ubuntu images, refer
 | `nightly-focal`                                      | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 
 For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supported architecture:
-```sh
-docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.2-focal
-```
+
+  ```sh
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.2-focal
+  ```
 
 ### Deprecated Image Tags
 
@@ -123,20 +125,20 @@ The following image tags have been deprecated and are no longer receiving update
 
 * Clone this repository and set it as your working directory:
 
-```sh
-git clone https://github.com/rlaiola/relax-docker.git
-cd relax-docker
-```
+  ```sh
+  git clone https://github.com/rlaiola/relax-docker.git
+  cd relax-docker
+  ```
 
-* Then, use the commands below to build the image:
+  * Then, use the commands below to build the image:
 
-```sh
-# List downloaded images
-docker images -a
+  ```sh
+  # List downloaded images
+  docker images -a
 
-# Build image
-docker build -f Dockerfile -t relax-docker .
-```
+  # Build image
+  docker build -f Dockerfile -t relax-docker .
+  ```
 
 ## How To Publish It
 
@@ -144,21 +146,35 @@ docker build -f Dockerfile -t relax-docker .
 
 * After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`.
 
-```sh
-docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.2
-```
+  ```sh
+  docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.2
+  ```
 
 * Log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
 
-```sh
-docker login ghcr.io
-```
+  ```sh
+  docker login ghcr.io
+  ```
 
 * Push the container image to registry.
 
-```sh
-docker push ghcr.io/rlaiola/relax-docker:1.0.2
-```
+  ```sh
+  docker push ghcr.io/rlaiola/relax-docker:1.0.2
+  ```
+
+## How to Contribute
+
+If you would like to help contribute to this project, please see [CONTRIBUTING](https://github.com/rlaiola/boca-utils/blob/main/CONTRIBUTING.md).
+
+Before submitting a PR consider building and testing a Docker image locally and checking your code with Super-Linter:
+
+  ```sh
+  docker run --rm \
+              -e RUN_LOCAL=true \
+              -e USE_FIND_ALGORITHM=true \
+              --env-file ".github/super-linter.env" \
+              -v "$PWD":/tmp/lint ghcr.io/github/super-linter:slim-v5
+  ```
 
 ## License
 
