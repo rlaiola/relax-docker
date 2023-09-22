@@ -38,7 +38,7 @@
 
 ## What Is relax-docker?
 
-An image of a Docker container with [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found [here](https://github.com/rlaiola/relax-api).
+A multi-platform/arch Docker version of [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found [here](https://github.com/rlaiola/relax-api).
 
 ## Requirements
 
