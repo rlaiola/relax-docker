@@ -1,4 +1,4 @@
-*/.dockerignore
+**/.dockerignore
 **/.DS_Store
 **/.git
 **/.github
