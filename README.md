@@ -1,15 +1,50 @@
 # relax-docker
 
-Image of a Docker container with [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found [here](https://github.com/rlaiola/relax-api).
+[![Build and publish multi-platform_Docker images on ghcr.io workflow][build_publish_workflow_badge]][build_publish_workflow_link]
+[![Delete GitHub Actions cache for repository workflow][cache_cleanup_workflow_badge]][cache_cleanup_workflow_link]
+[![Delete_untagged_and/or_unsupported_Docker_images_on_ghcr.io_workflow][packages_cleanup_workflow_badge]][packages_cleanup_workflow_link]
+[![Close_stale_issues_and_PRs_workflow][close_stale_workflow_badge]][close_stale_workflow_link]
+
+[![Ubuntu JAMMY][ubuntu_jammy_badge]][ubuntu_jammy_link]
+[![Ubuntu FOCAL][ubuntu_focal_badge]][ubuntu_focal_link]
+[![Multi-Architecture][arch_badge]][arch_link]
+
+[build_publish_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/ci.yml?label=build%20images&logo=github
+[build_publish_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=CI "build and publish multi-platform images"
+[cache_cleanup_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/clean-cache.yml?label=clean%20cache&logo=github
+[cache_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20GitHub "delete github actions cache"
+[packages_cleanup_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/clean-packages.yml?label=clean%20packages&logo=github
+[packages_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20untagged "delete untagged/unsupported images"
+[close_stale_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/close-stale.yml?label=close%20stale&logo=github
+[close_stale_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=close%20stale "close stale issues and prs"
+[ubuntu_jammy_badge]: https://img.shields.io/badge/ubuntu-jammy-E95420.svg?logo=Ubuntu
+[ubuntu_focal_badge]: https://img.shields.io/badge/ubuntu-focal-E95420.svg?logo=Ubuntu
+[ubuntu_jammy_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy "ubuntu:jammy image"
+[ubuntu_focal_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=focal "ubuntu:focal image"
+[arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20|%20arm/v7%20|%20arm64/v8%20|%20ppc64le%20|%20s390x%20-lightgray.svg?logo=Docker&logoColor=white
+[arch_link]: #how-to-run-on-different-ubuntu-release-images "multi-arch images"
+
+## Table of Contents
+
+- [What Is relax-docker?](#what-is-relax-docker)
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [How To Add Custom Configuration](#how-to-add-custom-configuration)
+- [How To Build It (For Development)](#how-to-build-it-for-development)
+- [How To Publish It](#how-to-publish-it)
+- [License](#license)
+- [Support](#support)
+
+## What Is relax-docker?
+
+An image of a Docker container with [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found [here](https://github.com/rlaiola/relax-api).
 
 ## Requirements
 
 * Install [Git](https://github.com/git-guides/install-git) (only for building and publishing);
 * Install [Docker Desktop](https://www.docker.com/get-started).
 
-## How To Use This Docker Image
-
-### Quick Start
+## Quick Start
 
 * Open a Terminal window and log in into GitHub’s Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
 
@@ -20,7 +55,7 @@ Image of a Docker container with [RelaX - relational algebra calculator](https:/
 * Once you logged in, start the container using the following command:
 
   ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.1
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.2
   ```
 
   > **NOTE:** The container uses ports 8080 (RelaX Web app) and 3000 (RelaX API). Port mapping is mandatory for the desired service to work (i.e., the argument '-p HOST_PORT:3000' is needed only if you plan to use RelaX API, and vice-versa).
@@ -41,6 +76,8 @@ Image of a Docker container with [RelaX - relational algebra calculator](https:/
     <img src="imgs/relax_api.png" width=800 />
   </p>
 
+## How To Add Custom Configuration
+
 ### Increasing Github Rate Limit For API Requests Using Basic Authentication
 
 RelaX Web application and API may need to make calls to GitHub API (i.e., to download datasets specified in GitHub Gists). According to the [documentation](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting), "for unauthenticated requests, the rate limit allows for up to 60 requests per hour.
@@ -50,52 +87,78 @@ Unauthenticated requests are associated with the originating IP address, and not
 
 * Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
-  ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.1
-  ```
+```sh
+docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax-docker:1.0.2
+```
 
-  > **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
+> **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
 
-  ```sh
-  curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
-  ```
+```sh
+curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+```
 
-## How To Build This Docker Image
+### Running On Different Ubuntu Release Images
 
-* Open a Terminal window and prepare the environment.
+To run _relax-docker_ built on top of different versions of Ubuntu images, refer to the tags from the table below.
 
-  ```sh
-  # Clone this repo and set it as your working directory
-  git clone https://github.com/rlaiola/relax-docker.git
-  cd relax-docker
+| Tag name                                             | Ubuntu version | Code name       | Architecture                                      |
+|------------------------------------------------------|----------------|-----------------|---------------------------------------------------|
+| `latest`, `1.0`, `1.0-jammy`, `1.0.2`, `1.0.2-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| `1.0-focal`, `1.0.2-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| `nightly`, `nightly-jammy`                           | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| `nightly-focal`                                      | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 
-  # List downloaded images
-  docker images -a
+For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supported architecture:
+```sh
+docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax-docker:1.0.2-focal
+```
 
-  # List existing containers
-  docker container ls -a
+### Deprecated Image Tags
 
-  # Build image
-  docker build -f Dockerfile -t relax-docker .
+The following image tags have been deprecated and are no longer receiving updates:
+- 1.0.1
+- 1.0.0
 
-  # Get IMAGE_ID and specify a version number (e.g., 1.0.1)
-  docker images -a
-  docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.1
-  ```
+## How To Build It (For Development)
 
-## How To Upload This Docker Image
+* Clone this repository and set it as your working directory:
 
-* Open a Terminal window and log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
+```sh
+git clone https://github.com/rlaiola/relax-docker.git
+cd relax-docker
+```
 
-  ```sh
-  docker login ghcr.io
-  ```
+* Then, use the commands below to build the image:
 
-* Push the container image to repository.
+```sh
+# List downloaded images
+docker images -a
 
-  ```sh
-  docker push ghcr.io/rlaiola/relax-docker:1.0.1
-  ```
+# Build image
+docker build -f Dockerfile -t relax-docker .
+```
+
+## How To Publish It
+
+> **NOTE:** These instructions take into account the Docker image generated in the previous section (no multi-platform support).
+
+* After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`.
+
+```sh
+docker tag IMAGE_ID ghcr.io/rlaiola/relax-docker:1.0.2
+```
+
+* Log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)).
+
+```sh
+docker login ghcr.io
+```
+
+* Push the container image to registry.
+
+```sh
+docker push ghcr.io/rlaiola/relax-docker:1.0.2
+```
 
 ## License
 
