@@ -170,8 +170,10 @@ jobs:
         name: Delete untagged Docker images on ghcr.io
         uses: actions/delete-package-versions@v4
         with:
+          # package-name: 
+          #   '${{ steps.setup.outputs.package_name }}/${{ matrix.image }}'
           package-name: 
-            '${{ steps.setup.outputs.package_name }}/${{ matrix.image }}'
+            '${{ matrix.image }}'
           package-type: 'container'
           delete-only-untagged-versions: 'true'
           ignore-versions: '${{ steps.untagged.outputs.digest_keys }}'
@@ -236,9 +238,10 @@ jobs:
           echo "${DEPRECATED[@]}"
 
           PACKAGE=${{ steps.setup.outputs.package_name }}
-          ENCODED_PACKAGE="${PACKAGE}/${{ matrix.image }}"
+          # ENCODED_PACKAGE="${PACKAGE}/${{ matrix.image }}"
+          ENCODED_PACKAGE="${{ matrix.image }}"
           # Replace '/' with '%2F'
-          ENCODED_PACKAGE="${ENCODED_PACKAGE//\//\%2F}"
+          # ENCODED_PACKAGE="${ENCODED_PACKAGE//\//\%2F}"
           echo "$ENCODED_PACKAGE"
 
           PACKAGES_URL="/users/${{ env.OWNER_NAME }}/"
@@ -327,7 +330,9 @@ jobs:
         if: ${{ steps.unsupported.outputs.version_ids != '' }}
         with:
           package-version-ids: '${{ steps.unsupported.outputs.version_ids }}'
+          # package-name:
+          #   '${{ steps.setup.outputs.package_name }}/${{ matrix.image }}'
           package-name:
-            '${{ steps.setup.outputs.package_name }}/${{ matrix.image }}'
+            '${{ matrix.image }}'
           package-type: 'container'
           token: ${{ secrets.GITHUB_TOKEN }}
