@@ -129,7 +129,8 @@ jobs:
           unset DIGEST_KEYS
           # Set image
           IMG="${{ env.REGISTRY_HOST }}/"
-          IMG+="${{ env.REPOSITORY_NAME }}/"
+          # IMG+="${{ env.REPOSITORY_NAME }}/"
+          IMG+="${{ env.OWNER_NAME }}/"
           IMG+="${{ matrix.image }}"
           echo "$IMG"
 
@@ -186,7 +187,8 @@ jobs:
 
           # Set image
           IMG="${{ env.REGISTRY_HOST }}/"
-          IMG+="${{ env.REPOSITORY_NAME }}/"
+          # IMG+="${{ env.REPOSITORY_NAME }}/"
+          IMG+="${{ env.OWNER_NAME }}/"
           IMG+="${{ matrix.image }}"
           echo "$IMG"
 
