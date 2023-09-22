@@ -208,7 +208,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/dev/${{ steps.setup.outputs.folder_name }}/Dockerfile
+          # file: docker/dev/${{ steps.setup.outputs.folder_name }}/Dockerfile
+          file: Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
