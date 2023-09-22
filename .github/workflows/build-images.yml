@@ -112,7 +112,8 @@ jobs:
           echo "base_image=$BASE_IMAGE" >> "$GITHUB_OUTPUT"
 
           # Set image
-          IMG="${{ env.REGISTRY_HOST }}/${{ env.REPOSITORY_NAME }}/"
+          # IMG="${{ env.REGISTRY_HOST }}/${{ env.REPOSITORY_NAME }}/"
+          IMG="${{ env.REGISTRY_HOST }}/${{ env.OWNER_NAME }}/"
           IMG+="${{ matrix.image }}"
           echo "$IMG"
           echo "image_name=$IMG" >> "$GITHUB_OUTPUT"
@@ -268,7 +269,8 @@ jobs:
           echo "release_name=$RELEASE" >> "$GITHUB_OUTPUT"
 
           # Set image name
-          IMG="${{ env.REGISTRY_HOST }}/${{ env.REPOSITORY_NAME }}/"
+          # IMG="${{ env.REGISTRY_HOST }}/${{ env.REPOSITORY_NAME }}/"
+          IMG="${{ env.REGISTRY_HOST }}/${{ env.OWNER_NAME }}/"
           IMG+="${{ matrix.image }}"
           echo "$IMG"
           echo "image_name=$IMG" >> "$GITHUB_OUTPUT"
