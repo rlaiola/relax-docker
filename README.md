@@ -22,7 +22,7 @@
 [ubuntu_jammy_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy "ubuntu:jammy image"
 [ubuntu_focal_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=focal "ubuntu:focal image"
 [arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20|%20arm/v7%20|%20arm64/v8%20|%20ppc64le%20|%20s390x%20-lightgray.svg?logo=Docker&logoColor=white
-[arch_link]: #how-to-run-on-different-ubuntu-release-images "multi-arch images"
+[arch_link]: #running-on-different-ubuntu-release-images "multi-arch images"
 
 ## Table of Contents
 
