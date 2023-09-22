@@ -1,0 +1,11 @@
+*/.dockerignore
+**/.DS_Store
+**/.git
+**/.github
+**/.gitignore
+**/.json
+**/.vscode
+**/Dockerfile*
+**/imgs
+**/tests
+*.md
