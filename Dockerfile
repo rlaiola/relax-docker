@@ -1,5 +1,5 @@
 #========================================================================
-# Copyright 2021 Rodrigo Laiola Guimarães
+# Copyright 2021 Rodrigo Laiola Guimaraes
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,31 +55,52 @@
 # References:
 #    https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 
-FROM ubuntu:kinetic
+# Build on base image (default: ubuntu:jammy)
+# Use official Docker images whenever possible
+ARG BASE_IMAGE=ubuntu:jammy
+
+# The efficient way to publish multi-arch containers from GitHub Actions
+# https://actuated.dev/blog/multi-arch-docker-github-actions
+# hadolint ignore=DL3006
+FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BASE_IMAGE}
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
-ENV UPDATED_AT 2022-08-11
+ENV UPDATED_AT 2022-09-22
 
-# No interactive frontend during docker build.
+# No interactive frontend during docker build
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
 
+# Redundant but to ensure we are not going to break anything
+USER root
+
 # Install Node.js and npm
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
+# hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl gnupg \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        gnupg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+# hadolint ignore=DL4006
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
 
+# hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends nodejs npm \
+    && apt-get install -y --no-install-recommends \
+        nodejs \
+        npm \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-RUN node --version
-RUN npm --version
+# RUN node --version && npm --version
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, 
 # Japanese, Arabic, Hebrew, Thai and a few others)
@@ -89,9 +110,16 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
+# hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-      --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
+        google-chrome-stable \
+        fonts-ipafont-gothic \
+        fonts-wqy-zenhei \
+        fonts-thai-tlwg \
+        fonts-kacst \
+        fonts-freefont-ttf \
+        libxss1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -105,9 +133,11 @@ WORKDIR /usr/src
 # https://raw.githubusercontent.com/dbis-uibk/relax/development/helper/relaxCLI.py
 # Docker error: Unable to locate package git
 # https://stackoverflow.com/questions/29929534/docker-error-unable-to-locate-package-git
+# hadolint ignore=DL3008
 RUN apt-get update \
     # Necessary to clone repository \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends \
+        git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -141,7 +171,8 @@ WORKDIR /usr/src/relax-api/
 RUN npm i express puppeteer winston --save --only=production
 
 # Add RelaX user so we don't need --no-sandbox (puppeteer)
-RUN addgroup --system relaxuser && adduser --system --ingroup relaxuser relaxuser \
+RUN addgroup --system relaxuser \
+    && adduser --system --ingroup relaxuser relaxuser \
     && mkdir -p /home/relaxuser/Downloads \
     && chown -R relaxuser:relaxuser /home/relaxuser \
     && chown -R relaxuser:relaxuser /usr/src/relax-api
