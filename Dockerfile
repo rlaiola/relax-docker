@@ -71,7 +71,7 @@ ARG TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
-ENV UPDATED_AT 2022-09-22
+ENV UPDATED_AT 2022-09-27
 
 # No interactive frontend during docker build
 ENV DEBIAN_FRONTEND noninteractive
@@ -147,20 +147,30 @@ RUN git clone https://github.com/rlaiola/relax-api.git
 # Set new working folder
 WORKDIR /usr/src/relax-api
 
-# Clone RelaX repository and checkout the static files (branch gh-pages)
+# Clone RelaX repository and create a new release
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
 RUN git clone --branch development https://github.com/rlaiola/relax.git dist/relax
 
 # Change to the root of the local repository
 WORKDIR /usr/src/relax-api/dist/relax
 
-# List all your branches \
-# https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
-RUN git branch -a && \
-    # Checkout branch gh_pages and confirm you are now working on that one \
-    git checkout origin/gh-pages && \
-    git checkout gh-pages && \
-    git branch
+# Build and checkout the static files (branch gh-pages)
+RUN npm install --global yarn \
+    && yarn install \
+    && yarn build
+
+RUN mv dist /tmp/dist \
+    # # List all your branches \
+    # # https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
+    # && git branch -a \
+    # # Checkout branch gh_pages and confirm you are now working on that one \
+    # && git checkout origin/gh-pages \
+    # && git checkout gh-pages \
+    # && git branch \
+    && cd .. \
+    && rm -rf relax/* \
+    && cp -rf /tmp/dist/* relax/ \
+    && rm -rf /tmp/dist
 
 # Change to the root of the local repository
 WORKDIR /usr/src/relax-api/
