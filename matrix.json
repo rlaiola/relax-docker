@@ -19,8 +19,7 @@
     ],
     "//comment2": "Matrix of parent/base images used in builds (default: first value)",
     "parent": [
-        "ubuntu:jammy",
-        "ubuntu:focal"
+        "ubuntu:jammy"
     ],
     "//comment3": "Matrix of target os/platforms (multi-arch)",
     "platform": [
