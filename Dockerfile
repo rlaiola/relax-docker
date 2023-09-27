@@ -157,9 +157,8 @@ WORKDIR /usr/src/relax-api/dist/relax
 # Build and checkout the static files (branch gh-pages)
 RUN npm install --global yarn \
     && yarn install \
-    && yarn build
-
-RUN mv dist /tmp/dist \
+    && yarn build \
+    && mv dist /tmp/dist \
     # # List all your branches \
     # # https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
     # && git branch -a \
