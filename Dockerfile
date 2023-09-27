@@ -149,7 +149,7 @@ WORKDIR /usr/src/relax-api
 
 # Clone RelaX repository and checkout the static files (branch gh-pages)
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
-RUN git clone https://github.com/rlaiola/relax.git dist/relax
+RUN git clone --branch development https://github.com/rlaiola/relax.git dist/relax
 
 # Change to the root of the local repository
 WORKDIR /usr/src/relax-api/dist/relax
