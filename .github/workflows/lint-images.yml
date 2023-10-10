@@ -20,7 +20,7 @@ on:
     inputs:
       images:
         description:
-          Matrix of images to lint (i.e., relax-docker)
+          Matrix of images to lint (i.e., relax)
         required: true
         type: string
       parents:

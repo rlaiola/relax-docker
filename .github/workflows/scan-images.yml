@@ -19,7 +19,7 @@ on:
     inputs:
       images:
         description: 
-          Matrix of images to scan (i.e., relax-docker)
+          Matrix of images to scan (i.e., relax)
         required: true
         type: string
       parents:
