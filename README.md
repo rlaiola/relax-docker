@@ -137,7 +137,7 @@ The following image tags have been deprecated and are no longer receiving update
   docker images -a
 
   # Build image
-  docker build --build-arg REF_BRANCH=master -f Dockerfile -t relax .
+  docker build --build-arg REF_BRANCH=main -f Dockerfile -t relax .
   ```
 
 ## How To Publish It
