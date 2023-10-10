@@ -119,10 +119,14 @@ ARG BUILDPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
 
-# Checkout branch (default: gh-pages)
-ARG REF_BRANCH=gh-pages
+# Git URL of the RelaX repository to clone from (default: dbis-uibk/relax)
+ARG REPOSITORY=https://github.com/dbis-uibk/relax.git
+# The branch, tag or SHA to point to in the cloned RelaX repository
+# (default: gh-pages)
+ARG REF=gh-pages
 # Using ARG to set ENV
-ENV ENV_BRANCH=$REF_BRANCH
+ENV ENV_REPOSITORY=$REPOSITORY
+ENV ENV_REF=$REF
 
 # Redundant but to ensure we are not going to break anything
 # hadolint ignore=DL3002
@@ -130,13 +134,13 @@ USER root
 
 # Checkout ref branch
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
-RUN git clone --branch ${ENV_BRANCH} https://github.com/rlaiola/relax.git /tmp/relax
+RUN git clone --branch ${ENV_REF} "${ENV_REPOSITORY}" /tmp/relax
 
 # Set working folder
 WORKDIR /tmp/relax
 
 # Create a new release from source
-RUN if [ "$ENV_BRANCH" = "gh-pages" ]; \
+RUN if [ "$ENV_REF" = "gh-pages" ]; \
     then \
       mkdir ../dist \
       && cp -rf ./* ../dist \
@@ -181,10 +185,11 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Checkout API branch
-RUN git clone https://github.com/rlaiola/relax-api.git /usr/src/relax
+# Checkout RelaX API repository
+RUN git clone --branch main https://github.com/rlaiola/relax-api.git /usr/src/relax
+# RUN git clone --branch api https://github.com/rlaiola/relax.git /usr/src/relax
 
-# Copy BOCA repository from base image
+# Copy RelaX repository from dist image
 COPY --from=relax-dist /tmp/relax/dist /usr/src/relax/dist/relax
 
 # Set working folder
