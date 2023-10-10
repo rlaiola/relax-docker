@@ -224,7 +224,7 @@ jobs:
   build:
     uses: ./.github/workflows/build-images.yml
     with:
-      images: '[ "relax-docker" ]'
+      images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       default_parent: ${{ needs.setup-matrix.outputs.default_parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
@@ -240,7 +240,7 @@ jobs:
   lint:
     uses: ./.github/workflows/lint-images.yml
     with:
-      images: '[ "relax-docker" ]'
+      images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tag: ${{ needs.setup-inputs.outputs.tags }}
@@ -252,7 +252,7 @@ jobs:
   scan:
     uses: ./.github/workflows/scan-images.yml
     with:
-      images: '[ "relax-docker" ]'
+      images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tag: ${{ needs.setup-inputs.outputs.tags }}
