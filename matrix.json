@@ -19,7 +19,8 @@
     ],
     "//comment2": "Matrix of parent/base images used in builds (default: first value)",
     "parent": [
-        "ubuntu:jammy"
+        "ubuntu:jammy",
+        "ubuntu:focal"
     ],
     "//comment3": "Matrix of target os/platforms (multi-arch)",
     "platform": [
@@ -28,5 +29,9 @@
         "linux/arm64/v8",
         "linux/ppc64le",
         "linux/s390x"
-    ]
+    ],
+    "//comment4": "Git URL of the RelaX repository to clone from (empty for https://github.com/dbis-uibk/relax.git)",
+    "repository": "https://github.com/rlaiola/relax.git",
+    "//comment5": "The branch, tag or SHA to point to in the cloned RelaX repository",
+    "ref": "main"
 }

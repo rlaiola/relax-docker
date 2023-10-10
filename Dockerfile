@@ -1,5 +1,5 @@
 #========================================================================
-# Copyright 2021 Rodrigo Laiola Guimaraes
+# Copyright Universidade Federal do Espirito Santo (Ufes)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,22 +18,22 @@
 #
 #========================================================================
 
-# Dockerfile to build the image of a Docker container with RelaX - relational 
-# algebra calculator (https://dbis-uibk.github.io/relax/). Moreover, this
-# build includes a workaround to facilitate the integration of Relax Query
+# Dockerfile to build a multi-platform/arch Docker version of RelaX - 
+# relational algebra calculator (https://dbis-uibk.github.io/relax/). Moreover,
+# this build includes a workaround to facilitate the integration of Relax Query
 # API with third-party applications/systems (RelaX implementation uses React 
 # JS, a UI framework, to load data asynchronously on a single page application. 
 # This approach returns a web page what does not include the data).
 #
 # BUILD DOCKER:
 #
-#     docker build -f Dockerfile -t relax-docker .
+#     docker build -f Dockerfile -t relax .
 #
 # RUN DOCKER:
 #
 #    -  Quick start:
 #
-#    docker run -i --init --rm -p 80:8080 -p 3000:3000 relax-docker
+#    docker run -i --init --rm -p 80:8080 -p 3000:3000 relax
 #
 #    **NOTE:** The container uses ports 8080 (RelaX Web app) and 3000 (RelaX Query
 #              API). Port mapping is mandatory for the desired service to work 
@@ -62,7 +62,7 @@ ARG BASE_IMAGE=ubuntu:jammy
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
 # hadolint ignore=DL3006
-FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BASE_IMAGE}
+FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BASE_IMAGE} AS relax-base
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -71,41 +71,99 @@ ARG TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
-ENV UPDATED_AT 2022-09-27
+ENV UPDATED_AT 2023-10-10
 
 # No interactive frontend during docker build
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
 
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+
 # Redundant but to ensure we are not going to break anything
+# hadolint ignore=DL3002
 USER root
+
+# Install dependencies
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      curl \
+      git \
+      gnupg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and npm
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
-# hadolint ignore=DL3008
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        curl \
-        gnupg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 # hadolint ignore=DL4006
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008,DL3016
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        nodejs \
-        npm \
+      nodejs \
+      npm \
+    && npm install --global yarn \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-# RUN node --version && npm --version
 
-# Install latest chrome dev package and fonts to support major charsets (Chinese, 
-# Japanese, Arabic, Hebrew, Thai and a few others)
-# Note: this installs the necessary libs to make the bundled version of Chromium 
-# that Puppeteer installs, work
+# The efficient way to publish multi-arch containers from GitHub Actions
+# https://actuated.dev/blog/multi-arch-docker-github-actions
+# hadolint ignore=DL3006
+FROM --platform=${BUILDPLATFORM:-linux/amd64} relax-base AS relax-dist
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+
+# Checkout branch (default: gh-pages)
+ARG REF_BRANCH=gh-pages
+# Using ARG to set ENV
+ENV ENV_BRANCH=$REF_BRANCH
+
+# Redundant but to ensure we are not going to break anything
+# hadolint ignore=DL3002
+USER root
+
+# Checkout ref branch
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
+RUN git clone --branch ${ENV_BRANCH} https://github.com/rlaiola/relax.git /tmp/relax
+
+# Set working folder
+WORKDIR /tmp/relax
+
+# Create a new release from source
+RUN if [ "$ENV_BRANCH" = "gh-pages" ]; \
+    then \
+      mkdir ../dist \
+      && cp -rf ./* ../dist \
+      && mv ../dist .; \
+    else \
+      yarn install \
+      && yarn build \
+      && yarn cache clean; \
+    fi
+
+# The efficient way to publish multi-arch containers from GitHub Actions
+# https://actuated.dev/blog/multi-arch-docker-github-actions
+# hadolint ignore=DL3006
+FROM --platform=${BUILDPLATFORM:-linux/amd64} relax-base
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+
+# Redundant but to ensure we are not going to break anything
+USER root
+
+# Install latest chrome dev package and fonts to support major charsets
+# (Chinese, Japanese, Arabic, Hebrew, Thai and a few others).
+# Note: this installs the necessary libs to make the bundled version of
+# Chromium that Puppeteer installs, work.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
@@ -113,78 +171,36 @@ RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        google-chrome-stable \
-        fonts-ipafont-gothic \
-        fonts-wqy-zenhei \
-        fonts-thai-tlwg \
-        fonts-kacst \
-        fonts-freefont-ttf \
-        libxss1 \
+      google-chrome-stable \
+      fonts-ipafont-gothic \
+      fonts-wqy-zenhei \
+      fonts-thai-tlwg \
+      fonts-kacst \
+      fonts-freefont-ttf \
+      libxss1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Tell Puppeteer to skip installing Chrome. We'll be using the installed package
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+# Checkout API branch
+RUN git clone https://github.com/rlaiola/relax-api.git /usr/src/relax
+
+# Copy BOCA repository from base image
+COPY --from=relax-dist /tmp/relax/dist /usr/src/relax/dist/relax
 
 # Set working folder
-WORKDIR /usr/src
-
-# https://raw.githubusercontent.com/dbis-uibk/relax/development/helper/relaxCLI.py
-# Docker error: Unable to locate package git
-# https://stackoverflow.com/questions/29929534/docker-error-unable-to-locate-package-git
-# hadolint ignore=DL3008
-RUN apt-get update \
-    # Necessary to clone repository \
-    && apt-get install -y --no-install-recommends \
-        git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Clone RelaX API repository
-RUN git clone https://github.com/rlaiola/relax-api.git
-    
-# Set new working folder
-WORKDIR /usr/src/relax-api
-
-# Clone RelaX repository and create a new release
-# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository
-RUN git clone --branch development https://github.com/rlaiola/relax.git dist/relax
-
-# Change to the root of the local repository
-WORKDIR /usr/src/relax-api/dist/relax
-
-# Build and checkout the static files (branch gh-pages)
-RUN npm install --global yarn \
-    && yarn install \
-    && yarn build \
-    && mv dist /tmp/dist \
-    # # List all your branches \
-    # # https://support.atlassian.com/bitbucket-cloud/docs/check-out-a-branch/ \
-    # && git branch -a \
-    # # Checkout branch gh_pages and confirm you are now working on that one \
-    # && git checkout origin/gh-pages \
-    # && git checkout gh-pages \
-    # && git branch \
-    && cd .. \
-    && rm -rf relax/* \
-    && cp -rf /tmp/dist/* relax/ \
-    && rm -rf /tmp/dist
-
-# Change to the root of the local repository
-WORKDIR /usr/src/relax-api/
+WORKDIR /usr/src/relax
 
 # Install dependencies
-#RUN npm i express puppeteer winston --save
+RUN npm i express puppeteer winston --save
 # For production
-RUN npm i express puppeteer winston --save --only=production
+# RUN npm i express puppeteer winston --save --only=production
 
 # Add RelaX user so we don't need --no-sandbox (puppeteer)
 RUN addgroup --system relaxuser \
     && adduser --system --ingroup relaxuser relaxuser \
     && mkdir -p /home/relaxuser/Downloads \
     && chown -R relaxuser:relaxuser /home/relaxuser \
-    && chown -R relaxuser:relaxuser /usr/src/relax-api
+    && chown -R relaxuser:relaxuser /usr/src/relax
 
 # Run everything after as non-privileged user
 USER relaxuser

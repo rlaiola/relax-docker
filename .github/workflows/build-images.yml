@@ -51,6 +51,18 @@ on:
           The branch, tag or SHA to checkout (empty for current branch)
         required: false
         type: string
+      relax_repository:
+        # Git URL of the RelaX repository to clone from.
+        description: 
+          Git URL of the RelaX repository to clone from (empty for https://github.com/dbis-uibk/relax.git)
+        required: false
+        type: string
+      relax_ref:
+        # The branch, tag or SHA to point to in the cloned RelaX repository.
+        description: 
+          The branch, tag or SHA to checkout (empty for RelaX repository's HEAD)
+        required: false
+        type: string
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -215,6 +227,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BASE_IMAGE=${{ steps.setup.outputs.base_image }}
+            REPOSITORY=${{ inputs.relax_repository }}
+            REF=${{ inputs.relax_ref }}
           # If true, it provides build attestations describing the image
           # contents and how they were built.
           provenance: false

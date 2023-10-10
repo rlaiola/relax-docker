@@ -43,6 +43,20 @@ on:
           The branch, tag or SHA to checkout (empty for current branch)
         required: false
         type: string
+      relax_repository:
+        # Git URL of the RelaX repository to clone from.
+        description: >-
+          Git URL of the RelaX repository to clone from (empty for the one 
+          specified in docker/build/matrix.json)
+        required: false
+        type: string
+      relax_ref:
+        # The branch, tag or SHA to point to in the cloned RelaX repository.
+        description: >-
+          The branch, tag or SHA to point to in the cloned RelaX repository 
+          (empty for repository's HEAD)
+        required: false
+        type: string
       attempt_limit:
         description: Set number of retries if workflow fails (default is 3)
         required: false
@@ -79,6 +93,8 @@ jobs:
       tags: ${{ steps.set-inputs.outputs.tags }}
       latest: ${{ steps.set-inputs.outputs.latest }}
       ref: ${{ steps.set-inputs.outputs.ref }}
+      relax_repository: ${{ steps.set-inputs.outputs.relax_repository }}
+      relax_ref: ${{ steps.set-inputs.outputs.relax_ref }}
       retry_countdown: ${{ steps.set-inputs.outputs.retry_countdown }}
       retry_delay: ${{ steps.set-inputs.outputs.retry_delay }}
     needs:
@@ -164,6 +180,24 @@ jobs:
             echo "ref=${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
           fi
 
+          # Prepare the Git URL of the RelaX repository to clone from and
+          # the branch, tag or SHA to point to in the cloned RelaX repository
+          RELAX_REPOSITORY="${{ inputs.relax_repository }}"
+          if [[ -z "$RELAX_REPOSITORY" ]];
+          then
+            RELAX_REPOSITORY="${{ needs.setup-matrix.outputs.repository }}"
+          fi
+          echo $RELAX_REPOSITORY
+          echo "relax_repository=${RELAX_REPOSITORY}" >> "$GITHUB_OUTPUT"
+
+          RELAX_REF="${{ inputs.relax_ref }}"
+          if [[ -z "$RELAX_REF" ]];
+          then
+          RELAX_REF="${{ needs.setup-matrix.outputs.ref }}"
+          fi
+          echo $RELAX_REF
+          echo "relax_ref=${RELAX_REF}" >> "$GITHUB_OUTPUT"
+
           # Prepare retry limit and retry delay
           ATTEMPTS="${{ inputs.attempt_limit }}"
           if [[ -z "$ATTEMPTS" ]];
@@ -197,6 +231,8 @@ jobs:
       tags: ${{ needs.setup-inputs.outputs.tags }}
       latest: ${{ needs.setup-inputs.outputs.latest == 'true' }}
       ref: ${{ needs.setup-inputs.outputs.ref }}
+      relax_repository: ${{ needs.setup-inputs.outputs.relax_repository }}
+      relax_ref: ${{ needs.setup-inputs.outputs.relax_ref }}
     needs:
       - setup-matrix
       - setup-inputs
