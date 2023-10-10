@@ -59,7 +59,7 @@ jobs:
     strategy:
       matrix:
         image:
-          - relax-docker
+          - relax
     needs: setup
 
     steps:
