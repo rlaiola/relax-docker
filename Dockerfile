@@ -146,7 +146,7 @@ RUN if [ "$ENV_REF" = "gh-pages" ]; \
       && cp -rf ./* ../dist \
       && mv ../dist .; \
     else \
-      yarn install \
+      yarn install --ignore-engines \
       && yarn build \
       && yarn cache clean; \
     fi
