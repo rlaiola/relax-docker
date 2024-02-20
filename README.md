@@ -170,10 +170,12 @@ Before submitting a PR consider building and testing a Docker image locally and 
 
   ```sh
   docker run --rm \
-              -e RUN_LOCAL=true \
-              -e USE_FIND_ALGORITHM=true \
-              --env-file ".github/super-linter.env" \
-              -v "$PWD":/tmp/lint ghcr.io/github/super-linter:slim-v5
+             -e ACTIONS_RUNNER_DEBUG=true \
+             -e RUN_LOCAL=true \
+             -e DEFAULT_BRANCH=main \
+             --env-file ".github/super-linter.env" \
+             -v "$PWD":/tmp/lint \
+             ghcr.io/super-linter/super-linter:latest
   ```
 
 ## License
