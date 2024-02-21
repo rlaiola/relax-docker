@@ -260,7 +260,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: 
+          name:
             ${{ steps.export.outputs.digests_name }}
           path: ${{ steps.setup.outputs.digests_path }}/*
           if-no-files-found: error
