@@ -64,7 +64,7 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 * Open a Web browser window and visit the URL [http://localhost](http://localhost). Voilà! RelaX Web application should work properly;
 
   <p align="center">
-    <img src="imgs/relax_web_app.png" width=800 />
+    <img src="imgs/relax_web_app.png" alt="RelaX web app" width=800 />
   </p>
 
 * Run the following command to test the RelaX API. You should get the query result encoded in JSON format;
@@ -74,7 +74,7 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
   ```
 
   <p align="center">
-    <img src="imgs/relax_api.png" width=800 />
+    <img src="imgs/relax_api.png" alt="Testing RelaX API" width=800 />
   </p>
 
 ## How To Add Custom Configuration
@@ -170,10 +170,12 @@ Before submitting a PR consider building and testing a Docker image locally and 
 
   ```sh
   docker run --rm \
-              -e RUN_LOCAL=true \
-              -e USE_FIND_ALGORITHM=true \
-              --env-file ".github/super-linter.env" \
-              -v "$PWD":/tmp/lint ghcr.io/github/super-linter:slim-v5
+             -e ACTIONS_RUNNER_DEBUG=true \
+             -e RUN_LOCAL=true \
+             -e DEFAULT_BRANCH=main \
+             --env-file ".github/super-linter.env" \
+             -v "$PWD":/tmp/lint \
+             ghcr.io/super-linter/super-linter:latest
   ```
 
 ## License
