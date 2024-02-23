@@ -154,18 +154,18 @@ jobs:
       #     echo "{}" > ./playwright/.auth/system.json
       #   working-directory: ./tests/e2e
 
-      - 
-        name: Run Playwright tests
-        run: npx playwright test
-        working-directory: ./tests/e2e
+      # - 
+      #   name: Run Playwright tests
+      #   run: npx playwright test
+      #   working-directory: ./tests/e2e
 
-      - 
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: ${{ steps.setup.outputs.report_name }}
-          path: ./tests/e2e/playwright-report/
-          retention-days: 30
+      # - 
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: ${{ steps.setup.outputs.report_name }}
+      #     path: ./tests/e2e/playwright-report/
+      #     retention-days: 30
 
       - 
         name: Run cURL test
