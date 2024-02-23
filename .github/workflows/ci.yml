@@ -261,6 +261,17 @@ jobs:
       - setup-inputs
       - build
 
+  e2e-test:
+    uses: ./.github/workflows/e2e-tests.yml
+    with:
+      parents: ${{ needs.setup-matrix.outputs.parent }}
+      platforms: ${{ needs.setup-matrix.outputs.platform }}
+      tag: ${{ needs.setup-inputs.outputs.tags }}
+    needs:
+      - setup-matrix
+      - setup-inputs
+      - build
+
   # Restart the scheduled workflow when it failed (on schedule only)
   # https://www.eliostruyf.com/restart-github-actions-workflow-failed/
   retry-builds:
