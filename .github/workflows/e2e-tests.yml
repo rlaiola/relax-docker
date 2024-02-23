@@ -168,12 +168,19 @@ jobs:
       #     retention-days: 30
 
       - 
-        name: Run cURL test
+        name: Test the RelaX API (cURL)
         run: |
 
           RESPONSE=$(curl \
             http://localhost:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU)
           echo $RESPONSE
+
+          SUCCESS=`echo $RESPONSE | jq -r '.success'`
+          echo $SUCCESS
+          if [ $SUCCESS != "true" ] ;
+          then
+            exit 1;
+          fi
 
       - 
         name: Bring the application down
