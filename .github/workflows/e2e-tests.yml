@@ -70,7 +70,7 @@ jobs:
 
           # Set package and tag
           # PACKAGE="${{ env.REGISTRY_HOST }}/${{ env.REPOSITORY_NAME }}"
-          PACKAGE="${{ env.REGISTRY_HOST }}/${{ env.OWNER_NAME }}/"
+          PACKAGE="${{ env.REGISTRY_HOST }}/${{ env.OWNER_NAME }}"
           TAG="${TAGS[0]}-$RELEASE"
           echo "$PACKAGE"
           echo "$TAG"
