@@ -182,14 +182,14 @@ jobs:
             exit 1;
           fi
 
-      - 
-        name: Bring the application down
-        run: |
+      # - 
+      #   name: Bring the application down
+      #   run: |
 
-          # Stop containers
-          docker compose down
+      #     # Stop containers
+      #     docker compose down
 
-          # Remove old images/containers
-          docker system prune
+      #     # Remove old images/containers
+      #     docker system prune
 
-        working-directory: ./tests/e2e
+      #   working-directory: ./tests/e2e
