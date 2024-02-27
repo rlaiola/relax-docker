@@ -68,8 +68,6 @@ ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
-# Using ARG to set ENV
-ENV ENV_TARGETARCH=$TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
@@ -110,13 +108,15 @@ RUN apt-get update \
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
 # https://github.com/nodejs/docker-node/blob/b695e030ea98f272d843feb98ee1ab62943071b3/14/bullseye/Dockerfile
 # hadolint ignore=DL4006
-RUN ARCH= && echo "$BUILDPLATFORM" \
-    && case "$ENV_TARGETARCH" in \
+RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+    && echo "$dpkgArch" \
+    && case "${dpkgArch##*-}" in \
       amd64) ARCH='x64';; \
-      arm-v7) ARCH='armv7l';; \
-      arm64-v8) ARCH='arm64';; \
-      ppc64le) ARCH='ppc64le';; \
+      ppc64el) ARCH='ppc64le';; \
       s390x) ARCH='s390x';; \
+      arm64) ARCH='arm64';; \
+      armhf) ARCH='armv7l';; \
+      i386) ARCH='x86';; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac \
     # gpg keys listed at https://github.com/nodejs/node#release-keys
