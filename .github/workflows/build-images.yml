@@ -227,7 +227,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BASE_IMAGE=${{ steps.setup.outputs.base_image }}
-            TARGETARCH=${{ steps.setup.outputs.arch_name }}
             REPOSITORY=${{ inputs.relax_repository }}
             REF=${{ inputs.relax_ref }}
           # If true, it provides build attestations describing the image
