@@ -107,6 +107,7 @@ RUN apt-get update \
 # Install Node.js and npm
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
 # https://github.com/nodejs/docker-node/blob/b695e030ea98f272d843feb98ee1ab62943071b3/14/bullseye/Dockerfile
+# hadolint ignore=DL4006
 RUN ARCH= && dpkgArch="$TARGETARCH" \
     && case "${dpkgArch##*-}" in \
       amd64) ARCH='x64';; \
@@ -145,6 +146,7 @@ RUN ARCH= && dpkgArch="$TARGETARCH" \
     && node --version \
     && npm --version
 
+# hadolint ignore=SC2043
 RUN set -ex \
     && for key in \
       6A010C5166006599AA17F08146C2130DFD2497F5 \
