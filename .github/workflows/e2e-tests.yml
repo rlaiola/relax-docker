@@ -123,6 +123,8 @@ jobs:
           # List running containers
           docker container ls -a
 
+          docker logs e2e-relax-1
+
         working-directory: ./tests/e2e
 
       # Set up GitHub Actions workflow with a specific version of node.js
