@@ -118,7 +118,7 @@ jobs:
           docker images
 
           # Launch application
-          docker compose up -d --wait
+          docker compose up -d --wait --wait-timeout 30
 
           # List running containers
           docker container ls -a
