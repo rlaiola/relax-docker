@@ -113,11 +113,10 @@ RUN apt-get update \
 RUN ARCH= && dpkgArch="$ENV_TARGETARCH" \
     && case "${dpkgArch##*-}" in \
       amd64) ARCH='x64';; \
-      ppc64el) ARCH='ppc64le';; \
+      arm-v7) ARCH='armv7l';; \
+      arm64-v8) ARCH='arm64';; \
+      ppc64le) ARCH='ppc64le';; \
       s390x) ARCH='s390x';; \
-      arm64) ARCH='arm64';; \
-      armhf) ARCH='armv7l';; \
-      i386) ARCH='x86';; \
       *) echo "unsupported architecture"; exit 1 ;; \
     esac \
     # gpg keys listed at https://github.com/nodejs/node#release-keys
