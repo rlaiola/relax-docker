@@ -56,7 +56,7 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 * Once you logged in, start the container using the following command:
 
   ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.0.2
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.1.0
   ```
 
   > **NOTE:** The container uses ports 8080 (RelaX Web app) and 3000 (RelaX API). Port mapping is mandatory for the desired service to work (i.e., the argument '-p HOST_PORT:3000' is needed only if you plan to use RelaX API, and vice-versa).
@@ -89,7 +89,7 @@ Unauthenticated requests are associated with the originating IP address, and not
 * Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
   ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax:1.0.2
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax:1.1.0
   ```
 
 > **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
@@ -104,20 +104,21 @@ To run _relax-docker_ built on top of different versions of Ubuntu images, refer
 
 | Tag name                                             | Ubuntu version | Code name       | Architecture                                      |
 |------------------------------------------------------|----------------|-----------------|---------------------------------------------------|
-| `latest`, `1.0`, `1.0-jammy`, `1.0.2`, `1.0.2-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
-| `1.0-focal`, `1.0.2-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| `latest`, `1.1`, `1.1-jammy`, `1.1.0`, `1.1.0-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| `1.1-focal`, `1.1.0-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 | `nightly`, `nightly-jammy`                           | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 | `nightly-focal`                                      | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 
 For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supported architecture:
 
   ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.0.2-focal
+  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.1.0-focal
   ```
 
 ### Deprecated Image Tags
 
 The following image tags have been deprecated and are no longer receiving updates:
+- 1.0.2
 - 1.0.1
 - 1.0.0
 
@@ -147,7 +148,7 @@ The following image tags have been deprecated and are no longer receiving update
 * After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`;
 
   ```sh
-  docker tag IMAGE_ID ghcr.io/rlaiola/relax:1.0.2
+  docker tag IMAGE_ID ghcr.io/rlaiola/relax:1.1.0
   ```
 
 * Log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry));
@@ -159,7 +160,7 @@ The following image tags have been deprecated and are no longer receiving update
 * Push the container image to registry.
 
   ```sh
-  docker push ghcr.io/rlaiola/relax:1.0.2
+  docker push ghcr.io/rlaiola/relax:1.1.0
   ```
 
 ## How to Contribute
