@@ -110,8 +110,8 @@ RUN apt-get update \
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
 # https://github.com/nodejs/docker-node/blob/b695e030ea98f272d843feb98ee1ab62943071b3/14/bullseye/Dockerfile
 # hadolint ignore=DL4006
-RUN ARCH= && echo "$ENV_TARGETARCH" && dpkgArch="$ENV_TARGETARCH" \
-    && case "${dpkgArch##*-}" in \
+RUN ARCH= && echo "$ENV_TARGETARCH" \
+    && case "$ENV_TARGETARCH" in \
       amd64) ARCH='x64';; \
       arm-v7) ARCH='armv7l';; \
       arm64-v8) ARCH='arm64';; \
