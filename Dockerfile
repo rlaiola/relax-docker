@@ -71,11 +71,18 @@ ARG TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT 2021-07-07
-ENV UPDATED_AT 2023-10-10
+ENV UPDATED_AT 2024-02-27
 
 # No interactive frontend during docker build
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
+
+# Node and Yarn versions
+ARG NODE_VERSION=16.20.2
+ARG YARN_VERSION=1.22.19
+# Using ARG to set ENV
+ENV ENV_NODE_VERSION=$NODE_VERSION
+ENV ENV_YARN_VERSION=$YARN_VERSION
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -89,7 +96,9 @@ USER root
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+      ca-certificates \
       curl \
+      xz-utils \
       git \
       gnupg \
     && apt-get clean \
@@ -97,17 +106,62 @@ RUN apt-get update \
 
 # Install Node.js and npm
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
-# hadolint ignore=DL4006
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+# https://github.com/nodejs/docker-node/blob/b695e030ea98f272d843feb98ee1ab62943071b3/14/bullseye/Dockerfile
+RUN ARCH= && dpkgArch="$TARGETARCH" \
+    && case "${dpkgArch##*-}" in \
+      amd64) ARCH='x64';; \
+      ppc64el) ARCH='ppc64le';; \
+      s390x) ARCH='s390x';; \
+      arm64) ARCH='arm64';; \
+      armhf) ARCH='armv7l';; \
+      i386) ARCH='x86';; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac \
+    # gpg keys listed at https://github.com/nodejs/node#release-keys
+    && set -ex \
+    && for key in \
+      4ED778F539E3634C779C87C6D7062848A1AB005C \
+      141F07595B7B3FFE74309A937405533BE57C7D57 \
+      74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+      DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
+      8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+      C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+      890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
+      C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
+      108F52B48DB57BB0CC439B2997B01419BD92F80A \
+      A363A499291CBBC940DD62E41F10027AF002F8B0 \
+    ; do \
+        gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
+        gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+    done \
+    && curl -fsSLO --compressed "https://nodejs.org/dist/v$ENV_NODE_VERSION/node-v$ENV_NODE_VERSION-linux-$ARCH.tar.xz" \
+    && curl -fsSLO --compressed "https://nodejs.org/dist/v$ENV_NODE_VERSION/SHASUMS256.txt.asc" \
+    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && grep " node-v$ENV_NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+    && tar -xJf "node-v$ENV_NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    && rm "node-v$ENV_NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+    # smoke tests
+    && node --version \
+    && npm --version
 
-# hadolint ignore=DL3008,DL3016
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-      nodejs \
-      npm \
-    && npm install --global yarn \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -ex \
+    && for key in \
+      6A010C5166006599AA17F08146C2130DFD2497F5 \
+    ; do \
+      gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
+      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+    done \
+    && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$ENV_YARN_VERSION/yarn-v$ENV_YARN_VERSION.tar.gz" \
+    && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$ENV_YARN_VERSION/yarn-v$ENV_YARN_VERSION.tar.gz.asc" \
+    && gpg --batch --verify yarn-v$ENV_YARN_VERSION.tar.gz.asc yarn-v$ENV_YARN_VERSION.tar.gz \
+    && mkdir -p /opt \
+    && tar -xzf yarn-v$ENV_YARN_VERSION.tar.gz -C /opt/ \
+    && ln -s /opt/yarn-v$ENV_YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn-v$ENV_YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+    && rm yarn-v$ENV_YARN_VERSION.tar.gz.asc yarn-v$ENV_YARN_VERSION.tar.gz \
+    # smoke test
+    && yarn --version
 
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
