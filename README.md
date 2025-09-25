@@ -38,22 +38,22 @@
 
 ## What Is relax-docker?
 
-A multi-platform/arch Docker version of [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found [here](https://github.com/rlaiola/relax-api).
+A multi-platform/arch Docker version of [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found in the [documentation](https://github.com/rlaiola/relax-api).
 
 ## Requirements
 
-* Install [Git](https://github.com/git-guides/install-git) (only for building and publishing);
-* Install [Docker Desktop](https://www.docker.com/get-started).
+- Install [Git](https://github.com/git-guides/install-git) (only for building and publishing);
+- Install [Docker Desktop](https://www.docker.com/get-started).
 
 ## Quick Start
 
-* Open a Terminal window and log in into GitHub’s Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry));
+- Open a Terminal window and log in into GitHub’s Container Registry using your username and personal access token (see [documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry));
 
   ```sh
   docker login ghcr.io
   ```
 
-* Once you logged in, start the container using the following command:
+- Once you logged in, start the container using the following command:
 
   ```sh
   docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.1.0
@@ -61,13 +61,13 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 
   > **NOTE:** The container uses ports 8080 (RelaX Web app) and 3000 (RelaX API). Port mapping is mandatory for the desired service to work (i.e., the argument '-p HOST_PORT:3000' is needed only if you plan to use RelaX API, and vice-versa).
 
-* Open a Web browser window and visit the URL [http://localhost](http://localhost). Voilà! RelaX Web application should work properly;
+- Open a Web browser window and visit the URL [http://localhost](http://localhost). Voilà! RelaX Web application should work properly;
 
   <p align="center">
     <img src="imgs/relax_web_app.png" alt="RelaX web app" width=800 />
   </p>
 
-* Run the following command to test the RelaX API. You should get the query result encoded in JSON format;
+- Run the following command to test the RelaX API. You should get the query result encoded in JSON format;
 
   ```sh
   curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
@@ -84,9 +84,9 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 RelaX Web application and API may need to make calls to GitHub API (i.e., to download datasets specified in GitHub Gists). According to the [documentation](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting), "for unauthenticated requests, the rate limit allows for up to 60 requests per hour.
 Unauthenticated requests are associated with the originating IP address, and not the user making requests." On the other hand, "for API requests using Basic Authentication ..., you can make up to 5,000 requests per hour." Follow the steps below in order to take advantage of a larger request limit:
 
-* Read these [instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/about-authentication-to-github#authenticating-with-the-api) to create a personal access token to authenticate with GitHub API;
+- Read these [instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/about-authentication-to-github#authenticating-with-the-api) to create a personal access token to authenticate with GitHub API;
 
-* Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
+- Then, start the container setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
   ```sh
   docker run -i --init --rm -p 80:8080 -p 3000:3000 -e GITHUB_ACCESS_TOKEN=my_token ghcr.io/rlaiola/relax:1.1.0
@@ -118,20 +118,21 @@ For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supporte
 ### Deprecated Image Tags
 
 The following image tags have been deprecated and are no longer receiving updates:
+
 - 1.0.2
 - 1.0.1
 - 1.0.0
 
 ## How To Build It (For Development)
 
-* Clone this repository and set it as your working directory:
+- Clone this repository and set it as your working directory:
 
   ```sh
   git clone https://github.com/rlaiola/relax-docker.git
   cd relax-docker
   ```
 
-* Then, use the commands below to build the image:
+- Then, use the commands below to build the image:
 
   ```sh
   # List downloaded images
@@ -145,19 +146,19 @@ The following image tags have been deprecated and are no longer receiving update
 
 > **NOTE:** These instructions take into account the Docker image generated in the previous section (no multi-platform support).
 
-* After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`;
+- After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`;
 
   ```sh
   docker tag IMAGE_ID ghcr.io/rlaiola/relax:1.1.0
   ```
 
-* Log in into GitHub's Container Registry using your username and personal access token (details [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry));
+- Log in into GitHub's Container Registry using your username and personal access token (see [documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry));
 
   ```sh
   docker login ghcr.io
   ```
 
-* Push the container image to registry.
+- Push the container image to registry.
 
   ```sh
   docker push ghcr.io/rlaiola/relax:1.1.0
