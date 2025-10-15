@@ -1,32 +1,86 @@
 ---
 name: CI
 
-# GitHub Actions Documentation:
-# https://docs.github.com/en/actions
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
 
-# Reusing workflows:
+# GitHub Actions Documentation
+# https://docs.github.com/en/github-ae@latest/actions
+
+# Reusing workflows
 # https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 on:
   schedule:
-    # Daily nightly build at 9:15 AM UTC
+    # Run daily at 9:15 AM UTC (nightly builds)
+    # Publish "nightly" build as release
     - cron: '15 9 * * *'
-    # Weekly rebuild latest on Mondays at 6:15 AM UTC
+    # Run once a week on Mondays at 6:15 AM UTC (rebuild latest)
     - cron: '15 6 * * MON'
   push:
-    # Trigger on semver tags
+    # Publish semver tags as releases (e.g., 1.0.0)
     tags: ['*.*.*']
-  workflow_dispatch: {}  # yamllint-friendly empty mapping
+  # or on button click
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      tags:
+        description: Image tags (whitespace-separated)
+        required: true
+        type: string
+      latest:
+        # The latest tag is automatically handled through the new tag/release
+        # event. Set for conditionally tagging with the latest tag.
+        description: For conditionally tagging with the latest tag
+        required: false
+        type: boolean
+      ref:
+        # The branch, tag or SHA to checkout in builds. If empty, check out
+        # the repository that triggered the workflow.
+        description:
+          The branch, tag or SHA to checkout (empty for current branch)
+        required: false
+        type: string
+      relax_repository:
+        # Git URL of the RelaX repository to clone from.
+        description: >-
+          Git URL of the RelaX repository to clone from (empty for the one 
+          specified in docker/build/matrix.json)
+        required: false
+        type: string
+      relax_ref:
+        # The branch, tag or SHA to point to in the cloned RelaX repository.
+        description: >-
+          The branch, tag or SHA to point to in the cloned RelaX repository 
+          (empty for repository's HEAD)
+        required: false
+        type: string
+      attempt_limit:
+        description: Set number of retries if workflow fails (default is 3)
+        required: false
+        type: number
+      attempt_delay:
+        description: Set delay between retries in seconds (default is 60)
+        required: false
+        type: number
 
 env:
+  # Number of retries if workflow fails (default is 3)
   RETRY_LIMIT: 3
+  # Delay between retries in seconds (default is 60)
   RETRY_DELAY: 60
 
+# Save computation power by stopping obsolete jobs for the current workflow
+# https://docs.github.com/en/enterprise-cloud@latest/actions/using-jobs/using-concurrency
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
+  # Calling a reusable workflow
+  # https://docs.github.com/en/actions/using-workflows/reusing-workflows
   setup-matrix:
     uses: ./.github/workflows/read-matrix.yml
     with:
@@ -34,8 +88,7 @@ jobs:
 
   setup-inputs:
     runs-on: ubuntu-latest
-    needs:
-      - setup-matrix
+    # Map the workflow outputs to job outputs
     outputs:
       tags: ${{ steps.set-inputs.outputs.tags }}
       latest: ${{ steps.set-inputs.outputs.latest }}
@@ -44,154 +97,272 @@ jobs:
       relax_ref: ${{ steps.set-inputs.outputs.relax_ref }}
       retry_countdown: ${{ steps.set-inputs.outputs.retry_countdown }}
       retry_delay: ${{ steps.set-inputs.outputs.retry_delay }}
+    needs:
+      - setup-matrix
 
     steps:
-      - name: Checkout repository
+      # Checkout a repository, so the workflow can access it
+      # https://github.com/actions/checkout
+      - 
+        name: Checkout repository
         uses: actions/checkout@v5
         with:
           ref: '${{ inputs.ref }}'
 
-      - name: Prepare inputs
+      # Setting output parameters between steps, jobs and/or workflows
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
+      - 
+        name: Prepare inputs
         id: set-inputs
         run: |
-          # Determine latest tag from setup-matrix
-          LATEST="${{ needs.setup-matrix.outputs.default_release }}"
-          CRON_EVENT="${{ github.event.schedule }}"
 
-          # Compute tags and latest flag
-          if [[ "${LATEST}" == "${{ inputs.tags }}" ]] || [[ "${CRON_EVENT}" == '15 6 * * MON' ]]; then
-            ret_code=$(git show-ref --tags --verify --quiet "refs/tags/${LATEST}" || echo 1)
-            if [[ "${ret_code}" == "1" ]]; then
+          LATEST="${{ needs.setup-matrix.outputs.default_release }}"
+
+          # Check if the input tag is equivalent to latest
+          # or it is a schedule to rebuild latest
+          CRON_EVENT="${{ github.event.schedule }}"
+          if [[ "${LATEST}" == "${{ inputs.tags }}" ]] ||
+             [[ "${CRON_EVENT}" == '15 6 * * MON' ]];
+          then
+            # Check if tag exists
+            ret_code=$(git show-ref --tags \
+                                    --verify \
+                                    --quiet "refs/tags/${LATEST}" || echo 1)
+            echo "${ret_code}"
+            if [[ "${ret_code}" == "1" ]];
+            then
               echo "Tag ${LATEST} does not exist"
-              gh release create "${LATEST}" --title "${LATEST} (beta)" --notes "Automatically generated." --prerelease || echo "Could not create tag/release."
+
+              # Create tag/release latest if it does not exist
+              try=$(gh release create ${LATEST} \
+                --title "${LATEST} (beta)" \
+                --notes "This release has been automatically generated." \
+                --prerelease || echo "Could not create tag/release.")
+            else
+              echo "Tag ${LATEST} exists"
             fi
+
+            # Set alternative tag
             SHORT_VERSION=${LATEST%.*}
             TAGS="${LATEST} ${SHORT_VERSION}"
+            echo "${TAGS}"
             echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+            echo 'true'
             echo "latest=true" >> "$GITHUB_OUTPUT"
+
+            echo "${LATEST}"
             echo "ref=${LATEST}" >> "$GITHUB_OUTPUT"
+          # Otherwise, this is the regular path
           else
             TAGS="${{ inputs.tags }}"
-            if [[ "${CRON_EVENT}" == '15 9 * * *' ]]; then
+
+            # Is it a nightly build?
+            if [[ "${CRON_EVENT}" == '15 9 * * *' ]];
+            then
+              # If so, include tag (fallback for retry workflow)
               TAGS="nightly"
             fi
-            if [[ -z "${TAGS}" ]]; then
+
+            # Is tag empty?
+            if [[ -z "${TAGS}" ]];
+            then
               TAGS="${GITHUB_REF#refs/*/}"
             fi
+
+            echo "$TAGS"
             echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
-            echo "latest=${{ inputs.latest }}" >> "$GITHUB_OUTPUT"
+
+            echo "${{ inputs.latest }}"
+            echo "latest=${{ inputs.latest == true }}" >> "$GITHUB_OUTPUT"
+
+            echo "${{ inputs.ref }}"
             echo "ref=${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
           fi
 
-          # Prepare RelaX repository info
+          # Prepare the Git URL of the RelaX repository to clone from and
+          # the branch, tag or SHA to point to in the cloned RelaX repository
           RELAX_REPOSITORY="${{ inputs.relax_repository }}"
-          if [[ -z "$RELAX_REPOSITORY" ]]; then
+          if [[ -z "$RELAX_REPOSITORY" ]];
+          then
             RELAX_REPOSITORY="${{ needs.setup-matrix.outputs.repository }}"
           fi
+          echo $RELAX_REPOSITORY
           echo "relax_repository=${RELAX_REPOSITORY}" >> "$GITHUB_OUTPUT"
 
           RELAX_REF="${{ inputs.relax_ref }}"
-          if [[ -z "$RELAX_REF" ]]; then
-            RELAX_REF="${{ needs.setup-matrix.outputs.ref }}"
+          if [[ -z "$RELAX_REF" ]];
+          then
+          RELAX_REF="${{ needs.setup-matrix.outputs.ref }}"
           fi
+          echo $RELAX_REF
           echo "relax_ref=${RELAX_REF}" >> "$GITHUB_OUTPUT"
 
-          # Retry config
+          # Prepare retry limit and retry delay
           ATTEMPTS="${{ inputs.attempt_limit }}"
-          if [[ -z "$ATTEMPTS" ]]; then
+          if [[ -z "$ATTEMPTS" ]];
+          then
             ATTEMPTS=${{ env.RETRY_LIMIT }}
+          else
+            ATTEMPTS=$(($ATTEMPTS))
           fi
+          echo $ATTEMPTS
           echo "retry_countdown=${ATTEMPTS}" >> "$GITHUB_OUTPUT"
 
           DELAY="${{ inputs.attempt_delay }}"
-          if [[ -z "$DELAY" ]]; then
+          if [[ -z "$DELAY" ]];
+          then
             DELAY=${{ env.RETRY_DELAY }}
+          else
+            DELAY=$(($DELAY))
           fi
+          echo $DELAY
           echo "retry_delay=${DELAY}" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
-    uses: rlaiola/ci-templates/.github/workflows/build-images.yml@main  # External repo must exist and be accessible
-    needs:
-      - setup-matrix
-      - setup-inputs
+    uses: ./.github/workflows/build-images.yml
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       default_parent: ${{ needs.setup-matrix.outputs.default_parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tags: ${{ needs.setup-inputs.outputs.tags }}
-      latest: ${{ needs.setup-inputs.outputs.latest }}
+      latest: ${{ needs.setup-inputs.outputs.latest == 'true' }}
       ref: ${{ needs.setup-inputs.outputs.ref }}
       relax_repository: ${{ needs.setup-inputs.outputs.relax_repository }}
       relax_ref: ${{ needs.setup-inputs.outputs.relax_ref }}
+    needs:
+      - setup-matrix
+      - setup-inputs
 
   lint:
-    uses: rlaiola/ci-templates/.github/workflows/lint-images.yml@main
-    needs:
-      - setup-matrix
-      - setup-inputs
-      - build
+    uses: ./.github/workflows/lint-images.yml
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tag: ${{ needs.setup-inputs.outputs.tags }}
+    needs:
+      - setup-matrix
+      - setup-inputs
+      - build
 
   scan:
-    uses: rlaiola/ci-templates/.github/workflows/scan-images.yml@main
-    needs:
-      - setup-matrix
-      - setup-inputs
-      - build
+    uses: ./.github/workflows/scan-images.yml
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tag: ${{ needs.setup-inputs.outputs.tags }}
-
-  e2e-test:
-    uses: ./.github/workflows/e2e-tests.yml  # Local workflow
     needs:
       - setup-matrix
       - setup-inputs
       - build
+
+  e2e-test:
+    uses: ./.github/workflows/e2e-tests.yml
     with:
       parents: ${{ needs.setup-matrix.outputs.parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
       tag: ${{ needs.setup-inputs.outputs.tags }}
+    needs:
+      - setup-matrix
+      - setup-inputs
+      - build
 
+  # Restart the scheduled workflow when it failed (on schedule only)
+  # https://www.eliostruyf.com/restart-github-actions-workflow-failed/
   retry-builds:
     runs-on: ubuntu-latest
-    if: failure()
+    if: |
+      failure()
     needs:
       - setup-inputs
       - build
+
     steps:
-      - name: Retry workflow
+
+      - 
+        name: Retry the workflow
         run: |
-          ATTEMPT=${{ needs.setup-inputs.outputs.retry_countdown }}
-          if [[ "$ATTEMPT" -le "0" ]]; then exit 1; fi
+
+          ATTEMPT=$((${{ needs.setup-inputs.outputs.retry_countdown }}))
+          echo $ATTEMPT
+          if [[ "$ATTEMPT" -le "0" ]];
+          then
+            exit 1
+          fi
           ATTEMPT=$((ATTEMPT-1))
-          DELAY=${{ needs.setup-inputs.outputs.retry_delay }}
+          echo $ATTEMPT
+
+          # Wait before restarting
+          DELAY=$((${{ needs.setup-inputs.outputs.retry_delay }}))
+          echo $DELAY
           sleep $DELAY
 
-          WORKFLOW_ID=$(gh api -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/actions/workflows | \
-            jq --arg var "${{ github.workflow }}" '.workflows[] | select(.name == $var) | .id')
+          WORKFLOWS_URL="/repos/${{ github.repository }}/"
+          WORKFLOWS_URL+="actions/workflows"
+          echo "$WORKFLOWS_URL"
 
-          JSON_STRING=$(jq -c -n \
-            --arg tag "${{ needs.setup-inputs.outputs.tags }}" \
-            --arg limit "$ATTEMPT" \
-            --arg delay "$DELAY" \
-            '{ref: "${{ github.ref }}", inputs: {tags: $tag, latest: "${{ needs.setup-inputs.outputs.latest }}", ref: "${{ needs.setup-inputs.outputs.ref }}", attempt_limit: $limit, attempt_delay: $delay}}')
+          # List repository workflows
+          # https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#list-repository-workflows
+          WORKFLOWS_JSON=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" ${WORKFLOWS_URL} || echo "")
+          echo "$WORKFLOWS_JSON"
 
-          curl -L -X POST \
+          # If list of workflows does not exist just fail
+          if [[ -z "${WORKFLOWS_JSON}" ]];
+          then
+            exit 1
+          fi
+
+          # Get id of current workflow
+          WORKFLOW_ID=`echo $WORKFLOWS_JSON | \
+            jq --arg var "${{ github.workflow }}" \
+              '.workflows[] | select(.name == $var) | .id'`
+          echo $WORKFLOW_ID
+
+          # Prepare api endpoint
+          URL="https://api.github.com/repos/${{ github.repository }}/\
+          actions/workflows/$WORKFLOW_ID/dispatches"
+          echo $URL
+
+          # Set tags
+          # API throws error if JSON has a whitespace-separated string
+          # Thus, sending the most relevant tag only
+          TAGS="${{ needs.setup-inputs.outputs.tags }}"
+          echo "$TAGS"
+          # Split string into an array
+          IFS=', ' read -r -a TAGS <<< "$TAGS"
+          echo "${TAGS[0]}"
+
+          # Prepare api payload
+          JSON_STRING=$( jq -c -n \
+            --arg tag ${TAGS[0]} \
+            --arg limit $ATTEMPT \
+            --arg delay $DELAY \
+            '{ref: "${{ github.ref }}",
+              inputs: {
+                tags: $tag,
+                latest: "${{ needs.setup-inputs.outputs.latest == 'true' }}",
+                ref: "${{ needs.setup-inputs.outputs.ref }}",
+                attempt_limit: $limit,
+                attempt_delay: $delay
+              }
+             }' )
+          echo $JSON_STRING
+
+          # Create a workflow dispatch event
+          # https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#create-a-workflow-dispatch-event
+          curl -L \
+            -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/dispatches \
-            -d "$JSON_STRING"
+            $URL \
+            -d $JSON_STRING
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
