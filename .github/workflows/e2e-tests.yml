@@ -93,6 +93,8 @@ jobs:
       # https://github.com/actions/checkout
       - 
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # fetch full history so we can push back
 
       - 
         name: Launch the application
