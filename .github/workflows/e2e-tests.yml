@@ -148,15 +148,22 @@ jobs:
               echo "package-lock.json was updated — committing changes"
               git config user.name "github-actions[bot]"
               git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+              # Ensure we have the latest main branch
+              git fetch origin main
+              git checkout main
+              git pull --rebase origin main
+      
               git add package-lock.json
               git commit -m "chore(ci): sync package-lock.json automatically"
-              git push
+              git push origin main
             else
               echo "No changes in package-lock.json"
             fi
           else
             echo "Lock file is up to date."
           fi
+
 
       # Performs a clean installation of all dependencies in the
       # `package.json` file
