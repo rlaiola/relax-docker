@@ -222,7 +222,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
-    uses: ./.github/workflows/build-images.yml
+    uses: rlaiola/ci-templates/.github/workflows/build-images.yml@main
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
@@ -238,7 +238,7 @@ jobs:
       - setup-inputs
 
   lint:
-    uses: ./.github/workflows/lint-images.yml
+    uses: rlaiola/ci-templates/.github/workflows//lint-images.yml@main
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
@@ -250,7 +250,7 @@ jobs:
       - build
 
   scan:
-    uses: ./.github/workflows/scan-images.yml
+    uses: rlaiola/ci-templates/.github/workflows//scan-images.yml@main
     with:
       images: '[ "relax" ]'
       parents: ${{ needs.setup-matrix.outputs.parent }}
