@@ -9,9 +9,6 @@ name: CI
 # GitHub Actions Documentation
 # https://docs.github.com/en/github-ae@latest/actions
 
-# Reusing workflows
-# https://docs.github.com/en/actions/using-workflows/reusing-workflows
-
 on:
   schedule:
     # Run daily at 9:15 AM UTC (nightly builds)
