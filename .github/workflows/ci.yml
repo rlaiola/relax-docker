@@ -95,8 +95,8 @@ jobs:
       tags: ${{ steps.set-inputs.outputs.tags }}
       latest: ${{ steps.set-inputs.outputs.latest }}
       ref: ${{ steps.set-inputs.outputs.ref }}
-      relax_repository: ${{ steps.set-inputs.outputs.repository }}
-      relax_ref: ${{ steps.set-inputs.outputs.ref }}
+      relax_repository: ${{ steps.set-inputs.outputs.relax_repository }}
+      relax_ref: ${{ steps.set-inputs.outputs.relax_ref }}
       retry_countdown: ${{ steps.set-inputs.outputs.retry_countdown }}
       retry_delay: ${{ steps.set-inputs.outputs.retry_delay }}
     needs:
@@ -233,8 +233,8 @@ jobs:
       tags: ${{ needs.setup-inputs.outputs.tags }}
       latest: ${{ needs.setup-inputs.outputs.latest == 'true' }}
       ref: ${{ needs.setup-inputs.outputs.ref }}
-      relax_repository: ${{ needs.setup-inputs.outputs.repository }}
-      relax_ref: ${{ needs.setup-inputs.outputs.ref }}
+      relax_repository: ${{ needs.setup-inputs.outputs.relax_repository }}
+      relax_ref: ${{ needs.setup-inputs.outputs.relax_ref }}
     needs:
       - setup-matrix
       - setup-inputs
