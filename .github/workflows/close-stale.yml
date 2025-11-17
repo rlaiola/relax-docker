@@ -19,12 +19,12 @@ on:
 jobs:
   close-stale:
     uses: rlaiola/ci-templates/.github/workflows/close-stale.yml@main
-    with:
-      stale_issue_label: stale
-      days_before_stale: 90
-      days_before_pr_stale: 45
-      days_before_close: 7
-      days_before_pr_close: -1
+    # with:
+    #   stale_issue_label: stale
+    #   days_before_stale: 90
+    #   days_before_pr_stale: 45
+    #   days_before_close: 7
+    #   days_before_pr_close: -1
     permissions:
       issues: write
       pull-requests: write
