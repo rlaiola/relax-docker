@@ -233,8 +233,8 @@ jobs:
       tags: ${{ needs.setup-inputs.outputs.tags }}
       latest: ${{ needs.setup-inputs.outputs.latest == 'true' }}
       ref: ${{ needs.setup-inputs.outputs.ref }}
-      relax_repository: ${{ needs.setup-inputs.outputs.relax_repository }}
-      relax_ref: ${{ needs.setup-inputs.outputs.relax_ref }}
+      code_repository: ${{ needs.setup-inputs.outputs.relax_repository }}
+      code_ref: ${{ needs.setup-inputs.outputs.relax_ref }}
     needs:
       - setup-matrix
       - setup-inputs
