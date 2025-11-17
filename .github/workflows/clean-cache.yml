@@ -16,11 +16,8 @@ on:
   # or on button click
   workflow_dispatch:
 
-env:
-  # Use github.repository (<account>/<repo>)
-  REPOSITORY_NAME: ${{ github.repository }}
-
 jobs:
+  # Calling a reusable workflow
   call-cleanup:
     uses: rlaiola/ci-templates/.github/workflows/clean-cache.yml@main
     secrets:
