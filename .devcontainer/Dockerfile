@@ -1,4 +1,3 @@
----
 #========================================================================
 # Copyright Universidade Federal do Espirito Santo (Ufes)
 #
@@ -19,11 +18,27 @@
 #
 #========================================================================
 
-services:
-  # relax app
-  relax:
-    image: '${PACKAGE}/relax:${TAG}'
-    platform: ${PLATFORM}
-    ports:
-      - 80:8080
-      - 3000:3000
+FROM mcr.microsoft.com/devcontainers/base:jammy
+
+LABEL authors="Rodrigo Laiola Guimaraes"
+ENV CREATED_AT=2025-10-15
+ENV UPDATED_AT=2025-10-15
+
+# No interactive frontend during docker build
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dev dependencies
+# hadolint ignore=DL3008,DL3013
+RUN apt-get -y update \
+    # Install hadolint (Dockerfile linter)
+    && wget -q -O /bin/hadolint \
+    https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 \
+    && chmod +x /bin/hadolint \
+    && apt-get -y install --no-install-recommends \
+    # Install ShellCheck (shell script linter)
+    shellcheck \
+    # Install shfmt formatter (shell script, dockerfile etc.)
+    shfmt \
+    # Install yamllinter (YAML linter)
+    yamllint \
+    && rm -rf /var/lib/apt/lists/*

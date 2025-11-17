@@ -51,8 +51,7 @@ jobs:
         platform: ${{ fromJSON(inputs.platforms) }}
 
     steps:
-      - 
-        name: Write variables to GITHUB_OUTPUT
+      - name: Write variables to GITHUB_OUTPUT
         id: setup
         run: |
 
@@ -91,13 +90,11 @@ jobs:
 
       # Checkout a repository, so the workflow can access it
       # https://github.com/actions/checkout
-      - 
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
-          fetch-depth: 0  # fetch full history so we can push back
+          fetch-depth: 0 # fetch full history so we can push back
 
-      - 
-        name: Launch the application
+      - name: Launch the application
         run: |
 
           # Create .env file with environment variables
@@ -129,31 +126,30 @@ jobs:
 
       # Set up GitHub Actions workflow with a specific version of node.js
       # https://github.com/actions/setup-node
-      - 
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
 
-      - 
-        name: Check and sync package-lock.json
+      - name: Check and sync package-lock.json
         working-directory: ./tests/e2e
         run: |
           # Try a dry run of npm ci
           if ! npm ci --dry-run --prefer-offline > /dev/null 2>&1; then
             echo "Lock file is out of sync, regenerating..."
             npm install
-      
+
             echo "Checking if package-lock.json changed..."
             if ! git diff --quiet package-lock.json; then
               echo "package-lock.json was updated — committing changes"
               git config user.name "github-actions[bot]"
-              git config user.email "github-actions[bot]@users.noreply.github.com"
-      
+              git config user.email \
+                "github-actions[bot]@users.noreply.github.com"
+
               # Ensure we have the latest main branch
               git fetch origin main
               git checkout main
               git pull --rebase origin main
-      
+
               git add package-lock.json
               git commit -m "chore(ci): sync package-lock.json automatically"
               git push origin main
@@ -164,21 +160,18 @@ jobs:
             echo "Lock file is up to date."
           fi
 
-
       # Performs a clean installation of all dependencies in the
       # `package.json` file
       # For more information, see https://docs.npmjs.com/cli/ci.html
-      - 
-        name: Install dependencies
+      - name: Install dependencies
         run: npm ci
         working-directory: ./tests/e2e
 
-      - 
-        name: Install Playwright Browsers
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: ./tests/e2e
 
-      # - 
+      # -
       #   name: Prepare for running tests
       #   run: |
 
@@ -187,21 +180,18 @@ jobs:
       #     echo "{}" > ./playwright/.auth/system.json
       #   working-directory: ./tests/e2e
 
-      - 
-        name: Run Playwright tests
+      - name: Run Playwright tests
         run: npx playwright test
         working-directory: ./tests/e2e
 
-      - 
-        uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: ${{ steps.setup.outputs.report_name }}
           path: ./tests/e2e/playwright-report/
           retention-days: 30
 
-      - 
-        name: Test the RelaX API (cURL)
+      - name: Test the RelaX API (cURL)
         run: |
 
           RESPONSE=$(curl \
@@ -215,8 +205,7 @@ jobs:
             exit 1;
           fi
 
-      - 
-        name: Bring the application down
+      - name: Bring the application down
         run: |
 
           # Stop containers

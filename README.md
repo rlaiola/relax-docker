@@ -10,19 +10,19 @@
 [![Multi-Architecture][arch_badge]][arch_link]
 
 [build_publish_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/ci.yml?label=build%20images&logo=github
-[build_publish_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=CI "build and publish multi-platform images"
+[build_publish_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=CI 'build and publish multi-platform images'
 [cache_cleanup_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/clean-cache.yml?label=clean%20cache&logo=github
-[cache_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20GitHub "delete github actions cache"
+[cache_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20GitHub 'delete github actions cache'
 [packages_cleanup_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/clean-packages.yml?label=clean%20packages&logo=github
-[packages_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20untagged "delete untagged/unsupported images"
+[packages_cleanup_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=delete%20untagged 'delete untagged/unsupported images'
 [close_stale_workflow_badge]: https://img.shields.io/github/actions/workflow/status/rlaiola/relax-docker/close-stale.yml?label=close%20stale&logo=github
-[close_stale_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=close%20stale "close stale issues and prs"
+[close_stale_workflow_link]: https://github.com/rlaiola/relax-docker/actions?workflow=close%20stale 'close stale issues and prs'
 [ubuntu_jammy_badge]: https://img.shields.io/badge/ubuntu-jammy-E95420.svg?logo=Ubuntu
 [ubuntu_focal_badge]: https://img.shields.io/badge/ubuntu-focal-E95420.svg?logo=Ubuntu
-[ubuntu_jammy_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy "ubuntu:jammy image"
-[ubuntu_focal_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=focal "ubuntu:focal image"
+[ubuntu_jammy_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy 'ubuntu:jammy image'
+[ubuntu_focal_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=focal 'ubuntu:focal image'
 [arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20|%20arm/v7%20|%20arm64/v8%20|%20ppc64le%20|%20s390x%20-lightgray.svg?logo=Docker&logoColor=white
-[arch_link]: #running-on-different-ubuntu-release-images "multi-arch images"
+[arch_link]: #running-on-different-ubuntu-release-images 'multi-arch images'
 
 ## Table of Contents
 
@@ -94,16 +94,16 @@ Unauthenticated requests are associated with the originating IP address, and not
 
 > **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
 
-  ```sh
-  curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
-  ```
+```sh
+curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+```
 
 ### Running On Different Ubuntu Release Images
 
 To run _relax-docker_ built on top of different versions of Ubuntu images, refer to the tags from the table below.
 
 | Tag name                                             | Ubuntu version | Code name       | Architecture                                      |
-|------------------------------------------------------|----------------|-----------------|---------------------------------------------------|
+| ---------------------------------------------------- | -------------- | --------------- | ------------------------------------------------- |
 | `latest`, `1.1`, `1.1-jammy`, `1.1.0`, `1.1.0-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 | `1.1-focal`, `1.1.0-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
 | `nightly`, `nightly-jammy`                           | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
@@ -111,9 +111,9 @@ To run _relax-docker_ built on top of different versions of Ubuntu images, refer
 
 For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supported architecture:
 
-  ```sh
-  docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.1.0-focal
-  ```
+```sh
+docker run -i --init --rm -p 80:8080 -p 3000:3000 ghcr.io/rlaiola/relax:1.1.0-focal
+```
 
 ### Deprecated Image Tags
 
@@ -170,15 +170,15 @@ If you would like to help contribute to this project, please see [CONTRIBUTING](
 
 Before submitting a PR consider building and testing a Docker image locally and checking your code with Super-Linter:
 
-  ```sh
-  docker run --rm \
-             -e ACTIONS_RUNNER_DEBUG=true \
-             -e RUN_LOCAL=true \
-             -e DEFAULT_BRANCH=main \
-             --env-file ".github/super-linter.env" \
-             -v "$PWD":/tmp/lint \
-             ghcr.io/super-linter/super-linter:latest
-  ```
+```sh
+docker run --rm \
+           -e ACTIONS_RUNNER_DEBUG=true \
+           -e RUN_LOCAL=true \
+           -e DEFAULT_BRANCH=main \
+           --env-file ".github/super-linter.env" \
+           -v "$PWD":/tmp/lint \
+           ghcr.io/super-linter/super-linter:latest
+```
 
 ## License
 
@@ -191,11 +191,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 This program is released under license GNU GPL v3+ license.
 

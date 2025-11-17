@@ -36,21 +36,22 @@ on:
       ref:
         # The branch, tag or SHA to checkout in builds. If empty, check out
         # the repository that triggered the workflow.
-        description:
-          The branch, tag or SHA to checkout (empty for current branch)
+        description: >-
+          The branch, tag or SHA to checkout
+          (empty for current branch)
         required: false
         type: string
       relax_repository:
         # Git URL of the RelaX repository to clone from.
         description: >-
-          Git URL of the RelaX repository to clone from (empty for the one 
+          Git URL of the RelaX repository to clone from (empty for the one
           specified in docker/build/matrix.json)
         required: false
         type: string
       relax_ref:
         # The branch, tag or SHA to point to in the cloned RelaX repository.
         description: >-
-          The branch, tag or SHA to point to in the cloned RelaX repository 
+          The branch, tag or SHA to point to in the cloned RelaX repository
           (empty for repository's HEAD)
         required: false
         type: string
@@ -107,16 +108,14 @@ jobs:
     steps:
       # Checkout a repository, so the workflow can access it
       # https://github.com/actions/checkout
-      - 
-        name: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v5
         with:
           ref: '${{ inputs.ref }}'
 
       # Setting output parameters between steps, jobs and/or workflows
       # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
-      - 
-        name: Prepare inputs
+      - name: Prepare inputs
         id: set-inputs
         run: |
 
@@ -287,9 +286,7 @@ jobs:
       - build
 
     steps:
-
-      - 
-        name: Retry the workflow
+      - name: Retry the workflow
         run: |
 
           ATTEMPT=$((${{ needs.setup-inputs.outputs.retry_countdown }}))
