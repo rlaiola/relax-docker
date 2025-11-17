@@ -67,6 +67,8 @@ on:
 permissions:
   contents: read
   packages: write
+  actions: read
+  security-events: write
 
 env:
   # Number of retries if workflow fails (default is 3)
