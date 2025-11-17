@@ -18,11 +18,11 @@
 #
 #========================================================================
 
-FROM mcr.microsoft.com/devcontainers/base:jammy
+FROM mcr.microsoft.com/devcontainers/typescript-node:1-20
 
 LABEL authors="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT=2025-10-15
-ENV UPDATED_AT=2025-10-15
+ENV UPDATED_AT=2025-11-17
 
 # No interactive frontend during docker build
 ENV DEBIAN_FRONTEND=noninteractive
@@ -42,3 +42,7 @@ RUN apt-get -y update \
     # Install yamllinter (YAML linter)
     yamllint \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Playwright and Chromium web browser
+RUN npx -y playwright install chromium \
+    && npx playwright install-deps chromium

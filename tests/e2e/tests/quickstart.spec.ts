@@ -13,42 +13,40 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// 
+//
 // This program is released under license GNU GPL v3+ license.
 //
 //========================================================================
 
 import { test, expect } from '@playwright/test';
 
-test.describe.serial("Test scenarios", () => {
-
+test.describe.serial('Test scenarios', () => {
   test.beforeEach(async ({ page }) => {
     // Go to the starting url before each test
     await page.goto('/relax');
   });
 
-  test.describe("Positive testing", () => {
-
+  test.describe('Positive testing', () => {
     test('Has title', async ({ page }) => {
       // Expect a title "to contain" a substring
       await expect(page).toHaveTitle(/RelaX/);
     });
 
-    test("Has text", async ({ page }) => {
+    test('Has text', async ({ page }) => {
       // Expect page "to contain" a string
       await expect(
-        page.getByText('RelaX - relational algebra calculator') !== undefined)
-          .toBeTruthy();
+        page.getByText('RelaX - relational algebra calculator') !== undefined
+      ).toBeTruthy();
     });
 
-    test("Get started", async ({ page }) => {
+    test('Get started', async ({ page }) => {
       // Click the get started button
       await page.getByRole('button', { name: 'Get Started' }).click();
 
       // Expect page "to contain" button
       await expect(
-        page.getByRole('button', { name: 'execute query' }) !== undefined)
-        .toBeTruthy();
+        page.getByRole('button', { name: 'execute query' }) !== undefined
+      ).toBeTruthy();
 
       // Run query
       await page.getByRole('button').filter({ hasText: 'Select DB' }).click();
@@ -58,17 +56,9 @@ test.describe.serial("Test scenarios", () => {
       await page.getByRole('button', { name: 'execute query' }).click();
 
       // Check tuples
-      await expect(
-        page.getByText('1\'a\'\'d\'100') !== undefined)
-        .toBeTruthy();
-      await expect(
-        page.getByText('4\'d\'\'f\'200') !== undefined)
-        .toBeTruthy();
-      await expect(
-        page.getByText('5\'d\'\'b\'200') !== undefined)
-        .toBeTruthy();
+      await expect(page.getByText("1'a''d'100") !== undefined).toBeTruthy();
+      await expect(page.getByText("4'd''f'200") !== undefined).toBeTruthy();
+      await expect(page.getByText("5'd''b'200") !== undefined).toBeTruthy();
     });
-
   });
-
 });

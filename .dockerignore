@@ -1,5 +1,7 @@
+**/.devcontainer
 **/.dockerignore
 **/.DS_Store
+**/.env*
 **/.git
 **/.github
 **/.gitignore

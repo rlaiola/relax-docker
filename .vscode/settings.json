@@ -40,6 +40,10 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[yaml]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -128,39 +132,39 @@
     //   "name": "erb_lint",
     //   "url": "https://github.com/Shopify/erb-lint"
     // },
-    // "eslint": {
-    //   "capabilities": [
-    //     "ignore-line",
-    //     "ignore-file",
-    //     "fix-one",
-    //     "fix-all",
-    //     "fix-inline"
-    //   ],
-    //   "command": [
-    //     "eslint",
-    //     "--format",
-    //     "json",
-    //     ["$config", "--config", "$config"],
-    //     ["$debug", "--loglevel", "debug", "--debug"],
-    //     ["$fixAll", "--fix-dry-run"],
-    //     ["$fixOne", "--fix-dry-run"],
-    //     "--stdin-filename",
-    //     "$file",
-    //     "--stdin"
-    //   ],
-    //   "configFiles": [
-    //     ".eslintrc.js",
-    //     ".eslintrc.cjs",
-    //     ".eslintrc.yaml",
-    //     ".eslintrc.yml",
-    //     ".eslintrc.json",
-    //     ".eslintrc"
-    //   ],
-    //   "enabled": false,
-    //   "languages": ["javascript", "jsx", "typescript", "typescriptreact"],
-    //   "name": "eslint",
-    //   "url": "https://eslint.org"
-    // },
+    "eslint": {
+      "capabilities": [
+        "ignore-line",
+        "ignore-file",
+        "fix-one",
+        "fix-all",
+        "fix-inline"
+      ],
+      "command": [
+        "eslint",
+        "--format",
+        "json",
+        ["$config", "--config", "$config"],
+        ["$debug", "--loglevel", "debug", "--debug"],
+        ["$fixAll", "--fix-dry-run"],
+        ["$fixOne", "--fix-dry-run"],
+        "--stdin-filename",
+        "$file",
+        "--stdin"
+      ],
+      "configFiles": [
+        ".eslintrc.js",
+        ".eslintrc.cjs",
+        ".eslintrc.yaml",
+        ".eslintrc.yml",
+        ".eslintrc.json",
+        ".eslintrc"
+      ],
+      "enabled": false,
+      "languages": ["javascript", "jsx", "typescript", "typescriptreact"],
+      "name": "eslint",
+      "url": "https://eslint.org"
+    },
     // "gherkin-lint": {
     //   "capabilities": [],
     //   "command": [

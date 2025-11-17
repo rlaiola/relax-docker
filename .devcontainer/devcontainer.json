@@ -43,7 +43,7 @@
   "runArgs": ["--name=relax-docker-devcontainer", "--rm"],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "uname -a",
+  "postCreateCommand": "cd /workspaces/${localWorkspaceFolderBasename}/tests/e2e && npm install",
 
   // Indicates whether devcontainer.json supporting tools should stop the
   // containers when the related tool window is closed / shut down.
@@ -75,6 +75,7 @@
       "settings": {},
       "extensions": [
         "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
         "foxundermoon.shell-format",
         "ms-azuretools.vscode-docker",
         "davidanson.vscode-markdownlint",

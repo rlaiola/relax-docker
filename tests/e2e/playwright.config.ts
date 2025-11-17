@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// 
+//
 // This program is released under license GNU GPL v3+ license.
 //
 //========================================================================
@@ -47,7 +47,7 @@ export default defineConfig({
     baseURL: 'http://localhost:80',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on-first-retry'
   },
 
   /* Configure projects for major browsers */
@@ -57,24 +57,21 @@ export default defineConfig({
 
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'],
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup']
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'],
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Firefox'] },
+      dependencies: ['setup']
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'],
-      },
-      dependencies: ['setup'],
-    },
+      use: { ...devices['Desktop Safari'] },
+      dependencies: ['setup']
+    }
 
     /* Test against mobile viewports. */
     // {
@@ -95,7 +92,7 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ..devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
+  ]
 
   /* Run your local dev server before starting the tests */
   // webServer: {
