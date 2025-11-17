@@ -205,7 +205,7 @@ jobs:
         run: |
 
           RESPONSE=$(curl \
-            http://localhost:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU)
+            http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU)
           echo $RESPONSE
 
           SUCCESS=`echo $RESPONSE | jq -r '.success'`
