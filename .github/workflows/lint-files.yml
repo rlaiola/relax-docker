@@ -1,0 +1,42 @@
+---
+name: Lint code base
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub Actions Documentation
+# https://docs.github.com/en/github-ae@latest/actions
+
+on:
+  # Run on all pushes (except on master/main branch)
+  push:
+    branches-ignore: [master, main]
+    # Remove the line above to run when pushing to master
+  # PRs on master/main branch
+  pull_request:
+    branches: [master, main]
+  # or on button click
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      ref:
+        # The branch, tag or SHA to checkout for linting. If empty, check out
+        # the repository that triggered the workflow.
+        description: |
+          The branch, tag or SHA to checkout (empty for current branch)
+        required: false
+        type: string
+
+# Ensure all reusable workflows receive the correct permissions
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
+jobs:
+  lint-files:
+    uses: rlaiola/ci-templates/.github/workflows/lint-files.yml@main
+    with:
+      ref: ${{ github.event.inputs.ref || github.sha }}
