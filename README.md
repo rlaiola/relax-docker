@@ -149,7 +149,7 @@ The following image tags have been deprecated and are no longer receiving update
 
   ```sh
   # List downloaded images
-  docker images -a
+  docker image ls
 
   # Build image
   docker build --build-arg REF_BRANCH=main -f Dockerfile -t relax .
@@ -161,7 +161,7 @@ The following image tags have been deprecated and are no longer receiving update
 
 > **NOTE:** These instructions take into account the Docker image generated in the previous section (no multi-platform support).
 
-- After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker images -a`;
+- After building, set the user and image tags accordingly. The IMAGE_ID's will show up with the `docker image ls`;
 
   ```sh
   docker tag IMAGE_ID ghcr.io/rlaiola/relax:1.1.0
