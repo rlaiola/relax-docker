@@ -18,6 +18,7 @@
 //
 //========================================================================
 
+import process from 'process';
 import { defineConfig, devices } from '@playwright/test';
 
 /**

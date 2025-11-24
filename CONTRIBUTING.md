@@ -6,7 +6,7 @@ just a few small guidelines you need to follow.
 ## Code of Conduct
 
 This project has a
-[Code of Conduct](https://github.com/rlaiola/relax-docker/blob/master/CODE_OF_CONDUCT.md)
+[Code of Conduct](CODE_OF_CONDUCT.md)
 to which all contributors must adhere.
 
 ## Code Reviews

@@ -24,26 +24,35 @@
 [arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20|%20arm/v7%20|%20arm64/v8%20|%20ppc64le%20|%20s390x%20-lightgray.svg?logo=Docker&logoColor=white
 [arch_link]: #running-on-different-ubuntu-release-images 'multi-arch images'
 
+---
+
 ## Table of Contents
 
 - [What Is relax-docker?](#what-is-relax-docker)
 - [Requirements](#requirements)
 - [Quick Start](#quick-start)
-- [How To Add Custom Configuration](#how-to-add-custom-configuration)
-- [How To Build It (For Development)](#how-to-build-it-for-development)
-- [How To Publish It](#how-to-publish-it)
-- [How To Contribute](#how-to-contribute)
+- [Adding Custom Configuration](#adding-custom-configuration)
+- [Building (For Development)](#building-for-development)
+- [Publishing](#publishing)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [Security](#security)
 - [License](#license)
-- [Support](#support)
+
+---
 
 ## What Is relax-docker?
 
 A multi-platform/arch Docker version of [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/). Moreover, this build provides a workaround to facilitate the integration of RelaX Query API with third-party applications/systems. More information regarding this can be found in the [documentation](https://github.com/rlaiola/relax-api).
 
+---
+
 ## Requirements
 
 - Install [Git](https://github.com/git-guides/install-git) (only for building and publishing);
 - Install [Docker Desktop](https://www.docker.com/get-started).
+
+---
 
 ## Quick Start
 
@@ -70,14 +79,16 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 - Run the following command to test the RelaX API. You should get the query result encoded in JSON format;
 
   ```sh
-  curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+  curl http://127.0.0.1:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU
   ```
 
   <p align="center">
     <img src="imgs/relax_api.png" alt="Testing RelaX API" width=800 />
   </p>
 
-## How To Add Custom Configuration
+---
+
+## Adding Custom Configuration
 
 ### Increasing Github Rate Limit For API Requests Using Basic Authentication
 
@@ -123,7 +134,9 @@ The following image tags have been deprecated and are no longer receiving update
 - 1.0.1
 - 1.0.0
 
-## How To Build It (For Development)
+---
+
+## Building (For Development)
 
 - Clone this repository and set it as your working directory:
 
@@ -142,7 +155,9 @@ The following image tags have been deprecated and are no longer receiving update
   docker build --build-arg REF_BRANCH=main -f Dockerfile -t relax .
   ```
 
-## How To Publish It
+---
+
+## Publishing
 
 > **NOTE:** These instructions take into account the Docker image generated in the previous section (no multi-platform support).
 
@@ -164,13 +179,15 @@ The following image tags have been deprecated and are no longer receiving update
   docker push ghcr.io/rlaiola/relax:1.1.0
   ```
 
-## How to Contribute
+---
 
-If you would like to help contribute to this project, please see [CONTRIBUTING](https://github.com/rlaiola/boca-utils/blob/main/CONTRIBUTING.md).
+## Contributing
 
-Before submitting a PR consider building and testing a Docker image locally and checking your code with Super-Linter:
+If you would like to contribute to this project, please see **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
-```sh
+Before submitting a PR, you may test your code using Super-Linter:
+
+```bash
 docker run --rm \
            -e ACTIONS_RUNNER_DEBUG=true \
            -e RUN_LOCAL=true \
@@ -179,6 +196,20 @@ docker run --rm \
            -v "$PWD":/tmp/lint \
            ghcr.io/super-linter/super-linter:latest
 ```
+
+---
+
+## Code of Conduct
+
+See **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** for community standards.
+
+---
+
+## Security
+
+See **[SECURITY.md](SECURITY.md)** for vulnerability reporting instructions.
+
+---
 
 ## License
 
@@ -198,7 +229,3 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 This program is released under license GNU GPL v3+ license.
-
-## Support
-
-Please report any issues with relax at [https://github.com/rlaiola/relax-docker/issues](https://github.com/rlaiola/relax-docker/issues)

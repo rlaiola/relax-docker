@@ -33,7 +33,10 @@
     "context": ".",
     // Update the 'dockerFile' property if you aren't using the standard
     // 'Dockerfile' filename.
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "args": {
+      "REPOSITORY": "https://github.com/rlaiola/relax.git"
+    }
   },
   // "dockerComposeFile": "docker-compose.yml",
   // "service": "devcontainer",
@@ -43,7 +46,7 @@
   "runArgs": ["--name=relax-docker-devcontainer", "--rm"],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "cd /workspaces/${localWorkspaceFolderBasename}/tests/e2e && npm install",
+  "postCreateCommand": "cd /usr/src/relax-api && npm install && node server/index.js",
 
   // Indicates whether devcontainer.json supporting tools should stop the
   // containers when the related tool window is closed / shut down.
@@ -60,13 +63,10 @@
   //   "source=${localWorkspaceFolder}/data,target=/data,type=bind,consistency=cached"
   // ],
 
-  // Features to add to the dev container.
-  // More info: https://containers.dev/features.
-  // "features": {},
-
   // Use 'forwardPorts' to make a list of ports inside the container
   // available locally.
   // "forwardPorts": [],
+  "appPort": ["3000:3000", "80:8080"],
 
   // Configure tool-specific properties.
   "customizations": {
@@ -80,13 +80,18 @@
         "ms-azuretools.vscode-docker",
         "davidanson.vscode-markdownlint",
         "fnando.linter",
-        "streetsidesoftware.code-spell-checker"
+        "streetsidesoftware.code-spell-checker",
+        "touchlab.touchlab-vscode-office",
+        "github.copilot-chat"
       ]
     }
   },
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   "remoteUser": "root",
+
+  // Features to add to the dev container.
+  // More info: https://containers.dev/features.
   "features": {
     "ghcr.io/akhildevelops/devcontainer-features/apt:0": {},
     "ghcr.io/devcontainers/features/git:1": {

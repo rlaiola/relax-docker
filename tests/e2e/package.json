@@ -9,6 +9,6 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "@playwright/test": "^1.53.1",
-    "@types/node": "^20.11.20"
+    "@types/node": "^20.19.25"
   }
 }
