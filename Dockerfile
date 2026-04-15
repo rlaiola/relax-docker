@@ -151,6 +151,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 RUN set -ex \
     && for key in \
       6A010C5166006599AA17F08146C2130DFD2497F5 \
+      6D98490C6F1ACDDD448E45954F77679369475BAA \
     ; do \
       gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
       gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
