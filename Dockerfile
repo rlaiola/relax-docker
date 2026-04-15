@@ -153,8 +153,7 @@ RUN set -ex \
       6A010C5166006599AA17F08146C2130DFD2497F5 \
       6D98490C6F1ACDDD448E45954F77679369475BAA \
     ; do \
-      gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+      gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "$key" ; \
     done \
     && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$ENV_YARN_VERSION/yarn-v$ENV_YARN_VERSION.tar.gz" \
     && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$ENV_YARN_VERSION/yarn-v$ENV_YARN_VERSION.tar.gz.asc" \
