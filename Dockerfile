@@ -94,7 +94,8 @@ USER root
 
 # Install dependencies
 # hadolint ignore=DL3008
-RUN apt-get update \
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get -o Acquire::Retries=5 -o Acquire::http::No-Cache=true update \
     && apt-get install -y --no-install-recommends \
       ca-certificates \
       curl \
@@ -230,7 +231,8 @@ RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
 # hadolint ignore=DL3008
-RUN apt-get update \
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get -o Acquire::Retries=5 -o Acquire::http::No-Cache=true update \
     && apt-get install -y --no-install-recommends \
       google-chrome-stable \
       fonts-ipafont-gothic \
