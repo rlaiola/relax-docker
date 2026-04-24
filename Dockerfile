@@ -95,7 +95,8 @@ USER root
 ARG UBUNTU_SNAPSHOT=20240401T000000Z
 RUN sed -i "s|http://archive.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
     && sed -i "s|http://security.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
-    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid \
+    && echo 'Acquire::https::Verify-Peer "false";' > /etc/apt/apt.conf.d/99no-verify-peer
 
 # Install dependencies
 # hadolint ignore=DL3008
