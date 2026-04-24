@@ -94,9 +94,8 @@ USER root
 
 # Install dependencies
 # hadolint ignore=DL3008
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu|http://mirror.ubuntu.com/ubuntu|g' /etc/apt/sources.list \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get -o Acquire::Retries=5 update \
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get -o Acquire::Retries=10 update \
     && apt-get install -y --no-install-recommends \
       ca-certificates \
       curl \
