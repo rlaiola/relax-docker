@@ -92,7 +92,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # hadolint ignore=DL3002
 USER root
 
-ARG UBUNTU_SNAPSHOT=20240401T000000Z
+ARG UBUNTU_SNAPSHOT=20260201T000000Z
 RUN sed -i "s|http://archive.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
     && sed -i "s|http://security.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
     && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid \
@@ -101,6 +101,7 @@ RUN sed -i "s|http://archive.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu
 # Install dependencies
 # hadolint ignore=DL3008
 RUN apt-get update \
+    && apt-get dist-upgrade -y \
     && apt-get install -y --no-install-recommends \
       ca-certificates \
       curl \
