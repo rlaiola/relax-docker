@@ -1,9 +1,9 @@
 {
     "//comment1": "Matrix of supported image tags/releases (latest: first value)",
     "release": [
-        "1.1.0",
-        "1.1.0-jammy",
-        "1.1.0-focal",
+        "1.1.1",
+        "1.1.1-jammy",
+        "1.1.1-focal",
         "1.1",
         "1.1-jammy",
         "1.1-focal",
@@ -14,14 +14,15 @@
         "main",
         "main-jammy",
         "main-focal",
-        "1.0.2",
-        "1.0.2-jammy",
-        "1.0.2-focal",
+        "1.1.0",
+        "1.1.0-jammy",
+        "1.1.0-focal",
         "1.0",
         "1.0-jammy",
         "1.0-focal",
-        "1.0.1",
-        "1.0.0"
+        "1.0.2",
+        "1.0.2-jammy",
+        "1.0.2-focal"
     ],
     "//comment2": "Matrix of parent/base images used in builds (default: first value)",
     "parent": [
