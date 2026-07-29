@@ -79,7 +79,7 @@ A multi-platform/arch Docker version of [RelaX - relational algebra calculator](
 - Run the following command to test the RelaX API. You should get the query result encoded in JSON format;
 
   ```sh
-  curl http://127.0.0.1:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU
+  curl "http://127.0.0.1:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU"
   ```
 
   <p align="center">
