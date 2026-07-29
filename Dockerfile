@@ -62,7 +62,7 @@ ARG BASE_IMAGE=ubuntu:jammy
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
 # hadolint ignore=DL3006
-FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BASE_IMAGE} AS relax-base
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ${BASE_IMAGE} AS relax-base
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -71,7 +71,7 @@ ARG TARGETARCH
 
 LABEL maintainer="Rodrigo Laiola Guimaraes"
 ENV CREATED_AT=2021-07-07
-ENV UPDATED_AT=2025-11-17
+ENV UPDATED_AT=2026-07-29
 
 # No interactive frontend during docker build
 ENV DEBIAN_FRONTEND=noninteractive
@@ -92,16 +92,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # hadolint ignore=DL3002
 USER root
 
-ARG UBUNTU_SNAPSHOT=20260201T000000Z
-RUN sed -i "s|http://archive.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
-    && sed -i "s|http://security.ubuntu.com/ubuntu|http://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}|g" /etc/apt/sources.list \
-    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid \
-    && echo 'Acquire::https::Verify-Peer "false";' > /etc/apt/apt.conf.d/99no-verify-peer
-
 # Install dependencies
 # hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get dist-upgrade -y \
     && apt-get install -y --no-install-recommends \
       ca-certificates \
       curl \
@@ -176,7 +169,7 @@ RUN set -ex \
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
 # hadolint ignore=DL3006
-FROM --platform=${BUILDPLATFORM:-linux/amd64} relax-base AS relax-dist
+FROM --platform=${TARGETPLATFORM:-linux/amd64} relax-base AS relax-dist
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -218,7 +211,7 @@ RUN if [ "$ENV_REF" = "gh-pages" ]; \
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
 # hadolint ignore=DL3006
-FROM --platform=${BUILDPLATFORM:-linux/amd64} relax-base
+FROM --platform=${TARGETPLATFORM:-linux/amd64} relax-base
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -237,9 +230,7 @@ RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
 # hadolint ignore=DL3008
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu|http://mirror.ubuntu.com/ubuntu|g' /etc/apt/sources.list \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get -o Acquire::Retries=5 update \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
       google-chrome-stable \
       fonts-ipafont-gothic \
