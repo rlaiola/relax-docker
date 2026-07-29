@@ -226,8 +226,11 @@ USER root
 # Note: this installs the necessary libs to make the bundled version of
 # Chromium that Puppeteer installs, work.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+RUN mkdir -p /etc/apt/keyrings \
+      && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
+      | gpg --dearmor -o /etc/apt/keyrings/google.gpg \
+      && echo "deb [arch=${TARGETARCH} signed-by=/etc/apt/keyrings/google.gpg] https://dl.google.com/linux/chrome/deb stable main" \
+    > /etc/apt/sources.list.d/google-chrome.list
 
 # hadolint ignore=DL3008
 RUN apt-get update \
