@@ -9,6 +9,9 @@ name: CI
 # GitHub Actions Documentation
 # https://docs.github.com/en/github-ae@latest/actions
 
+# Reusing workflows
+# https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
 on:
   schedule:
     # Run daily at 9:15 AM UTC (nightly builds)
@@ -228,6 +231,7 @@ jobs:
     uses: rlaiola/ci-templates/.github/workflows/build-images.yml@main
     with:
       images: '[ "relax" ]'
+      dockerfile: Dockerfile
       parents: ${{ needs.setup-matrix.outputs.parent }}
       default_parent: ${{ needs.setup-matrix.outputs.default_parent }}
       platforms: ${{ needs.setup-matrix.outputs.platform }}
