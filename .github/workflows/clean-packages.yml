@@ -24,9 +24,20 @@ on:
 
 jobs:
   # Calling a reusable workflow
+  # https://docs.github.com/en/actions/using-workflows/reusing-workflows
+  setup-matrix:
+    uses: rlaiola/ci-templates/.github/workflows/read-matrix.yml@main
+    with:
+      matrix-path: matrix.json
+
   call-cleanup:
     uses: rlaiola/ci-templates/.github/workflows/clean-packages.yml@main
     with:
+      images: >-
+        [
+          "${{ github.repository_owner }}/relax"
+        ]
+      releases: ${{ needs.setup-matrix.outputs.release }}
       tags: ${{ github.event.inputs.tags }}
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
