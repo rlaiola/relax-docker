@@ -35,7 +35,7 @@ jobs:
     with:
       images: >-
         [
-          "${{ github.repository_owner }}/relax"
+          "relax"
         ]
       releases: ${{ needs.setup-matrix.outputs.release }}
       tags: ${{ github.event.inputs.tags }}
