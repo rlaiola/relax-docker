@@ -21,7 +21,7 @@
 [ubuntu_focal_badge]: https://img.shields.io/badge/ubuntu-focal-E95420.svg?logo=Ubuntu
 [ubuntu_jammy_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=jammy 'ubuntu:jammy image'
 [ubuntu_focal_link]: https://hub.docker.com/_/ubuntu/tags?page=1&name=focal 'ubuntu:focal image'
-[arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20|%20arm/v7%20|%20arm64/v8%20|%20ppc64le%20|%20s390x%20-lightgray.svg?logo=Docker&logoColor=white
+[arch_badge]: https://img.shields.io/badge/multi--arch-%20amd64%20%20-lightgray.svg?logo=Docker&logoColor=white
 [arch_link]: #running-on-different-ubuntu-release-images 'multi-arch images'
 
 ---
@@ -113,12 +113,12 @@ curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/
 
 To run _relax-docker_ built on top of different versions of Ubuntu images, refer to the tags from the table below.
 
-| Tag name                                             | Ubuntu version | Code name       | Architecture                                      |
-| ---------------------------------------------------- | -------------- | --------------- | ------------------------------------------------- |
-| `latest`, `1.1`, `1.1-jammy`, `1.1.1`, `1.1.1-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
-| `1.1-focal`, `1.1.1-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
-| `nightly`, `nightly-jammy`                           | 22.04 LTS      | Jammy Jellyfish | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
-| `nightly-focal`                                      | 20.04 LTS      | Focal Fossa     | `amd64`, `arm/v7`, `arm64/v8`, `ppc64le`, `s390x` |
+| Tag name                                             | Ubuntu version | Code name       | Architecture |
+| ---------------------------------------------------- | -------------- | --------------- | ------------ |
+| `latest`, `1.1`, `1.1-jammy`, `1.1.1`, `1.1.1-jammy` | 22.04 LTS      | Jammy Jellyfish | `amd64`      |
+| `1.1-focal`, `1.1.1-focal`                           | 20.04 LTS      | Focal Fossa     | `amd64`      |
+| `nightly`, `nightly-jammy`                           | 22.04 LTS      | Jammy Jellyfish | `amd64`      |
+| `nightly-focal`                                      | 20.04 LTS      | Focal Fossa     | `amd64`      |
 
 For example, to use it running on Ubuntu 20.04 LTS (Focal Fossa) on any supported architecture:
 
