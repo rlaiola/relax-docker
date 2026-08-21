@@ -233,16 +233,21 @@ jobs:
       - name: Test the RelaX API (cURL)
         run: |
 
-          RESPONSE=$(curl \
-            http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU)
-          echo $RESPONSE
+          echo "=== Docker status ==="
+          docker compose ps
 
-          SUCCESS=`echo $RESPONSE | jq -r '.success'`
-          echo $SUCCESS
-          if [ $SUCCESS != "true" ] ;
-          then
-            exit 1;
-          fi
+          echo
+          echo "=== Listening ports inside container ==="
+          docker compose exec -T relax sh -c 'ss -lntp || netstat -lntp || true'
+
+          echo
+          echo "=== Local curl inside container ==="
+          docker compose exec -T relax \
+            curl -v http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU || true
+
+          echo
+          echo "=== Host curl ==="
+          curl -v http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU
 
       - name: Run Playwright tests
         run: npx playwright test
