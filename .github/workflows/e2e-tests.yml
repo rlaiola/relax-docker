@@ -44,8 +44,7 @@ jobs:
     timeout-minutes: 5
     continue-on-error: >-
       ${{
-        matrix.platform != 'linux/amd64' &&
-        matrix.platform != 'linux/arm64'
+        matrix.platform != 'linux/amd64'
       }}
     strategy:
       # If is set to true (default), GitHub will cancel all in-progress and
@@ -145,18 +144,16 @@ jobs:
           docker image ls
 
           # Launch application
-          docker compose up -d --wait || {
-            docker compose ps
+          docker compose up -d --wait
+
+          echo "=== Services after startup ==="
+          docker compose ps -a
+
+          if [ -z "$(docker compose ps -q --status running relax)" ]; then
+            echo "ERROR: relax container is not running"
             docker compose logs relax
             exit 1
-          }
-
-          #  Check for services that terminated unexpectedly during startup
-          docker compose ps --status exited
-
-          # List running containers
-          docker container ls -a
-
+          fi
         working-directory: ./tests/e2e
 
       # Set up GitHub Actions workflow with a specific version of node.js
@@ -233,21 +230,17 @@ jobs:
       - name: Test the RelaX API (cURL)
         run: |
 
-          echo "=== Docker status ==="
-          docker compose ps
+          RESPONSE=$(curl \
+            http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU)
+          echo $RESPONSE
 
-          echo
-          echo "=== Listening ports inside container ==="
-          docker compose exec -T relax sh -c 'ss -lntp || netstat -lntp || true'
-
-          echo
-          echo "=== Local curl inside container ==="
-          docker compose exec -T relax \
-            curl -v http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU || true
-
-          echo
-          echo "=== Host curl ==="
-          curl -v http://localhost:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU
+          SUCCESS=`echo $RESPONSE | jq -r '.success'`
+          echo $SUCCESS
+          if [ $SUCCESS != "true" ] ;
+          then
+            exit 1;
+          fi
+        working-directory: ./tests/e2e
 
       - name: Run Playwright tests
         run: npx playwright test
