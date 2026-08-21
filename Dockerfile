@@ -62,7 +62,7 @@ ARG BASE_IMAGE=ubuntu:jammy
 # The efficient way to publish multi-arch containers from GitHub Actions
 # https://actuated.dev/blog/multi-arch-docker-github-actions
 # hadolint ignore=DL3006
-FROM --platform=${TARGETPLATFORM:-linux/amd64} ${BASE_IMAGE} AS relax-base
+FROM ${BASE_IMAGE} AS relax-base
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -101,6 +101,7 @@ RUN apt-get update \
       xz-utils \
       git \
       gnupg \
+      libatomic1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
