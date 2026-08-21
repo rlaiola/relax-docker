@@ -104,25 +104,6 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Detect architecture and download Node.js binaries
-RUN uname -m \
-    && dpkg --print-architecture \
-    && dpkgArch="$(dpkg --print-architecture)" \
-    && case "${dpkgArch##*-}" in \
-      amd64) ARCH='x64';; \
-      ppc64el) ARCH='ppc64le';; \
-      s390x) ARCH='s390x';; \
-      arm64) ARCH='arm64';; \
-      armhf) ARCH='armv7l';; \
-      i386) ARCH='x86';; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac \
-    && echo "ARCH=$ARCH" \
-    && curl -fSL \
-      "https://nodejs.org/dist/v${ENV_NODE_VERSION}/node-v${ENV_NODE_VERSION}-linux-${ARCH}.tar.xz" \
-      -o /tmp/node.tar.xz \
-    && file /tmp/node.tar.xz
-
 # Install Node.js and npm
 # https://askubuntu.com/questions/720784/how-to-install-latest-node-inside-a-docker-container
 # https://github.com/nodejs/docker-node/blob/b695e030ea98f272d843feb98ee1ab62943071b3/14/bullseye/Dockerfile
