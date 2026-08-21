@@ -144,16 +144,19 @@ jobs:
           docker image ls
 
           # Launch application
-          docker compose up -d --wait
-
-          echo "=== Services after startup ==="
-          docker compose ps -a
-
-          if [ -z "$(docker compose ps -q --status running relax)" ]; then
-            echo "ERROR: relax container is not running"
+          # Launch application
+          docker compose up -d --wait || {
+            docker compose ps
             docker compose logs relax
             exit 1
-          fi
+          }
+
+          #  Check for services that terminated unexpectedly during startup
+          docker compose ps --status exited
+
+          # List running containers
+          docker container ls -a
+
         working-directory: ./tests/e2e
 
       # Set up GitHub Actions workflow with a specific version of node.js
